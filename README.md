@@ -35,6 +35,9 @@ Utilizing Amazons Simple Notification Service, this program serves as a front en
   - D2l
 - Two way communications
   - Using Twillo
+- easy installation
+  - Ansible install script
+  - VM Appliance
 
 # Installation Information
 - [See wiki](https://github.com/WesternOKState/CampusClaxon/wiki)
