@@ -2,7 +2,7 @@
 Campus Alert System.
 
 ## Claxon 
-  - [Noun] A loud electric horn, formerly used on automobiles, trucks, etc., and now often used as a warning signal.
+  - [Noun] - A loud electric horn, formerly used on automobiles, trucks, etc., and now often used as a warning signal.
   
 ## Overview
 Utilizing Amazons Simple Notification Service, this program serves as a front end to allow for the easy administration and use of Amazon's service to send text alerts to students. 
