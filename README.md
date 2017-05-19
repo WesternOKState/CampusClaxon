@@ -29,6 +29,8 @@ Utilizing Amazons Simple Notification Service, this program serves as a front en
   - Angel
   - Blackboard
   - D2l
+- Two way communications
+  - Using Twillo
 
 # Installation Information
 - See Wiki
