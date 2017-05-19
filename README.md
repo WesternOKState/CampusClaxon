@@ -8,8 +8,8 @@ Campus Alert System.
 Utilizing Amazons Simple Notification Service, this program serves as a front end to allow for the easy administration and use of Amazon's service to send text alerts to students. 
 
 ## Features
-- Easy SMS notifications for subscribers and groups of subscribers.
-- LTI Integration for the easy user and group management of course management systems Currently only supports Moodle CMS.
+- Easy SMS notifications for all subscribers or groups of subscribers.
+- LTI Integration for the easy user and group management of course management systems (Currently only supports Moodle CMS).
 - Standalone operation, to allow allow for use without CMS integration
 - Three levels of users
   - Administrators
@@ -17,7 +17,7 @@ Utilizing Amazons Simple Notification Service, this program serves as a front en
   - Instructors
     - Allows for the sending of notifications to specific groups
   - Subscribers
-    - Account management, notification management. To allow for the easy adjustment of notification options
+    - Account, notification and group management To allow for the easy adjustment of notification options
     
 ## Roadmap
 - Additional Notification Options
@@ -37,4 +37,4 @@ Utilizing Amazons Simple Notification Service, this program serves as a front en
   - Using Twillo
 
 # Installation Information
-- See Wiki
+- [See wiki](https://github.com/WesternOKState/CampusClaxon/wiki)
