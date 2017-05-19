@@ -18,7 +18,7 @@ Utilizing Amazons Simple Notification Service, this program serves as a front en
 ## Roadmap
 - Additional Notification Options
   - Email
-  - App
+  - Android/iPhone Apps
   - Webhooks
   - RSS Publication
   - Alertus Integration
