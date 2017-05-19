@@ -1,0 +1,263 @@
+{% extends "theme/pioneeralert/base-admin.html" %}
+{% block content %}
+    <br/>
+    <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'adminIndex' %}">Home</a></li>
+        <li><a href="{% url 'manageSubscribers' %}">Manage Subscribers</a></li>
+        <li class="active">Edit Subscriber</li>
+    </ol>
+
+    <div class="panel panel-primary blog-main">
+        <div class="panel-heading">
+            <h1 class="panel-title">
+                <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Edit Subscriber (User)
+            </h1>
+        </div>
+
+        <div class="panel-body">
+            <form action="." method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-sm-6">
+                        <input type="hidden" name="subscription" id="id_topic" value="{{ subscription }}">
+                        <input type="hidden" name="hash" id="id_hash" value="{{ subscriber.hash }}">
+                        <input type="hidden" name="cell_phone" id="id_cell_phone" value="{{ subscriber.cell_phone }}">
+                        <div class="input-row">
+                            <label for="id_first_name">
+                                {{ form.first_name.label }}:
+                            </label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="input-row">
+                            <label for="id_last_name">
+                                {{ form.last_name.label }}:
+                            </label>
+                            {{ form.last_name }}
+                        </div>
+                        <div class="input-row">
+                            <label for="id_personal_email">
+                                {{ form.personal_email.label }}:
+                            </label>
+                            {{ form.personal_email }}
+                        </div>
+                    </div><!--/col-->
+                    <div class="col-sm-6">
+                        <div class="input-row">
+                            <label for="id_student_id">
+                                {{ form.student_id.label }}:
+                            </label>
+                            {{ form.student_id }}
+                        </div>
+                        <div class="input-row">
+                            <label for="id_school_email">
+                                {{ form.school_email.label }}:
+                            </label>
+                            {{ form.school_email }}
+                        </div>
+                        <div class="input-row">
+                            Cell Phone:
+                            <br />
+                            <div class="fake-input cell">{{ subscriber.cell_phone }} </div>
+                            <a href="#" data-toggle="modal" data-target="#myModal" class="btn btn-warning cell"
+                               style="margin:0">
+                                <span class="glyphicon glyphicon-edit"></span>Edit Cell Phone
+                            </a>
+                        </div>
+                        <p>&nbsp;</p>
+                    </div><!--/col-->
+                </div><!--/row-->
+                <p>&nbsp;</p>
+                <button type="submit" class="btn btn-success" id="submitbtn" style="#float:left">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save Subscriber
+                </button>
+            </form>
+
+            <form action="{% url 'removeAccount' subscriber.hash %}" id="removebtn" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="hash" id="id_hash" value="{{ subscriber.hash }}">
+                <input type="hidden" name="cell_phone" id="id_cell_phone" value="{{ subscriber.cell_phone }}">
+                <button type="submit" class="btn btn-danger" style="#float:right">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove Subscriber
+                </button>
+            </form>
+            <p>&nbsp;</p>
+        </div><!--/panel-body-->
+    </div><!--/panel-->
+
+{#    <div class="panel panel-primary">#}
+{#        <div class="panel-heading">#}
+{#            <h1 class="panel-title">#}
+{#                <span class="glyphicon glyphicon-th" aria-hidden="true"></span>#}
+{#                Topic (Group) Subscriptions#}
+{#            </h1>#}
+{#        </div>#}
+{#        <div class="panel-body">#}
+{#            <h4>Current Topic Subscriptions for this User</h4>#}
+{#            <table>#}
+{#                <thead>#}
+{#                <th>#}
+{#                    Remove#}
+{#                </th>#}
+{#                <th>#}
+{#                    Topic Name#}
+{#                </th>#}
+{#                <th style="width:120px">#}
+{#                    Date Joined#}
+{#                </th>#}
+{#                </thead>#}
+{#                <tbody>#}
+{#                {% for topic in topics %}#}
+{#                    <form method="post" id="remove{{ loop.counter }}" action="{% url 'removeSubscriber' %}">#}
+{#                        <input type="hidden" name="SubscriptionArn" id="id_SubscriptionArn"#}
+{#                               value="{{ topic.subscription_arn }}">#}
+{#                        {% csrf_token %}#}
+{#                        <input type="hidden" name="hash" value="{{ hash }}" id="id_hash">#}
+{#                        <tr>#}
+{#                            <td style="width:120px">#}
+{#                                <a href="#" onclick="$('#remove{{ loop.counter }}').submit();" class="btn btn-danger"#}
+{#                                   style="margin: 0">#}
+{#                                    <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> Remove#}
+{#                                </a>#}
+{#                            </td>#}
+{#                            <td>#}
+{#                                {{ topic.topic_name }}#}
+{#                            </td>#}
+{#                            <td>#}
+{#                                {{ topic.topic_date }} Yesteryear#}
+{#                            </td>#}
+{#                        </tr>#}
+{#                    </form>#}
+{#                {% endfor %}#}
+{#                </tbody>#}
+{#            </table>#}
+
+
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="myModal" aria-hidden="true" style="display: none; ">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <div class="panel panel-danger">
+                        <div class="panel-heading">
+                            <h1 class="panel-title"><strong>Edit Cell Phone</strong></h1>
+                        </div>
+                        <div class="panel-body">
+                            <form action="{% url 'edit_cell_phone' %}" method="post">
+                                {% csrf_token %}
+                                {#                                {{ form.as_p }} <br/>#}
+                                <input type="hidden" name="hash" value="{{ subscriber.hash }}" id="id_hash">
+                                <br/>
+                                <label for="id_new_number">New Number:</label>
+                                <input class="form-control" type="text" name="new_number" id="id_new_number"
+                                       autofocus=""/>
+                                <input type="hidden" name="old_number" value="{{ subscriber.cell_phone }}" id="id_old_number"/>
+                                <br/>
+                                <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
+                                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save Cell
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+
+    <style>
+        .form-control {
+            width: 100%;
+            max-width: 400px;
+            font-family: Arial, sans-serif;
+        }
+
+        .fake-input {
+            display: inline-block;
+            width: 100%;
+            max-width: 400px;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            font-family: Arial, sans-serif;
+            color: #555;
+            cursor: not-allowed;
+            background-color: #eee;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        }
+
+        .cell {
+            width: 100%;
+            max-width: 197px;
+        }
+
+        div.row:first-of-type {
+            width: inherit !important;
+        }
+
+        .input-row {
+            padding: 8px 0;
+        }
+
+        #removebtn {
+            float: right;
+            margin: -54px 38px 0 0;
+        }
+
+        @media (min-width: 768px) and (max-width: 1149px) {
+            .cell {
+                width: 49%;
+                max-width: inherit;
+            }
+            #removebtn {
+                margin-right: 0;
+            }
+        }
+
+        @media (max-width: 479px){
+            .cell {
+                width: 49%;
+                max-width: inherit;
+            }
+            #removebtn {
+                margin-right: 0;
+            }
+        }
+
+        @media (max-width: 393px){
+            .cell {
+                width: 100%;
+                max-width: inherit;
+            }
+            #removebtn {
+                float:none;
+                margin: 0;
+            }
+        }
+    </style>
+
+    <script type="text/javascript">
+
+        $('#id_new_number').mask("9(999)999-9999", {placeholder: "{{ subscriber.cell_phone }}"});
+
+    </script>
+
+
+
+{% endblock %}
+

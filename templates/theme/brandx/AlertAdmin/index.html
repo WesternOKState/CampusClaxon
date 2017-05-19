@@ -1,0 +1,131 @@
+{% extends "theme/brandx/base-admin.html" %}
+{% block content %}
+    <br/>
+    <div class="container">
+    <ol class="breadcrumb">
+        <li class="active">Home</li>
+    </ol>
+
+    <div class="row" style="width: 40%; margin: -10px auto 10px;">
+    </div><!--/row-->
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h1 class="panel-title">
+                        Welcome <span style="color:#fdff7e">{{ user.first_name }}</span>, what would you like to do today?
+                    </h1>
+                </div>
+                <div class="panel-body">
+                    <div class="list-group" STYLE="margin-top:16px; margin-bottom: 40px;">
+                        <a href="{% url 'Send Alert' %}" class="list-group-item list-group-item-success2" style="color:green">
+                            <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> Send An Alert
+                        </a>
+                        <a href="{% url 'alert' %}" class="list-group-item list-group-item-info2">
+                            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> View Alert Logs
+                        </a>
+{#                        <a href="{% url 'manageAccount' %}" class="list-group-item" style="color:#c79031">#}
+{#                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit my Account#}
+{#                        </a>#}
+                    </div>
+
+                    <div class="list-group" style="margin-bottom:40px">
+                        <a href="{% url 'manageTopics' %}" class="list-group-item">
+                            <span class="badge">{{ number_of_topics }}</span>
+                            <span class="glyphicon glyphicon-th" aria-hidden="true"></span> Manage Groups
+                            <span style="font-size:10px">(Topics)</span>
+                        </a>
+                        <a href="{% url 'manageSubscribers' %}" class="list-group-item">
+                            <span class="badge">{{ number_of_subscribers }}</span>
+                            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Manage Subscribers
+                            <span style="font-size:10px">(All Users)</span>
+                        </a>
+                        <a href="{% url 'manageTemplates' %}" class="list-group-item">
+                            <span class="badge">{{ number_of_templates }}</span>
+                            <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Manage Templates
+                            <span style="font-size:10px">(Messages)</span>
+                        </a>
+                    </div>
+
+                    <div class="list-group" style="margin-bottom:40px">
+                        <a href="{% url 'editSettings' %}" class="list-group-item list-group-item-danger">
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit Settings
+                            <span style="font-size:10px">(ADVANCED)</span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-sm-3 2col-sm-offset-1 blog-sidebar">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h1 class="panel-title">
+                        {%  include "theme/brandx/BRANDING-name.html" %} Alert Help!
+                    </h1>
+                </div>
+                <div class="panel-body">
+
+                    <div class="sidebar-module">
+                        <h4>
+                            <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> Send an Alert
+                        </h4>
+                        <p>Send a text alert / notification to a group (or everyone).</p>
+                    </div><!--/sidebar-module-->
+                    <div class="sidebar-module">
+                        <h4>
+                            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> View Alert Logs
+                        </h4>
+                        <p>View past sent alerts.</p>
+                    </div><!--/sidebar-module-->
+
+                    <p>&nbsp;</p>
+
+                    <div class="sidebar-module">
+                        <h4>
+                            <span class="glyphicon glyphicon-th" aria-hidden="true"></span> Manage Groups
+                        </h4>
+                        <p>Add / Edit groups to send notifications.</p>
+                    </div><!--/sidebar-module-->
+                    <div class="sidebar-module">
+                        <h4>
+                            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Manage Subscribers
+                        </h4>
+                        <p>Add / Edit users within the {%  include "theme/brandx/BRANDING-name.html" %} Alert System.</p>
+                    </div><!--/sidebar-module-->
+                    <div class="sidebar-module">
+                        <h4>
+                            <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Manage Templates
+                        </h4>
+                        <p>Template is used to send a pre-formatted message.</p>
+                    </div><!--/sidebar-module-->
+
+                    <p>&nbsp;</p>
+
+                    <div class="sidebar-module">
+                        <h4>
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit Settings
+                        </h4>
+                        <p>Edit the brand, colors, and shared key information.</p>
+                    </div><!--/sidebar-module-->
+                    <!--/sidebar-module-->
+
+                </div><!--/panel-body-->
+            </div><!--/panel-->
+        </div><!--/blog-sidebar-->
+
+    </div><!--/row-->
+
+
+    <style>
+        .badge {
+            background-color: #138515;
+        }
+    </style>
+
+{% endblock %}
+

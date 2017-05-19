@@ -1,0 +1,55 @@
+{% extends "theme/brandx/base-admin.html" %}
+{% block content %}
+<br />
+<div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'adminIndex' %}">Home</a></li>
+        <li><a href="{% url 'manageSubscribers' topic.arn %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>  Manage Subscribers</a></li>
+        <li class="active">Browse Subscribers: {{ topic.name }}</li>
+    </ol>
+
+<div class="panel panel-primary blog-main">
+  <div class="panel-heading">
+    <h1 class="panel-title"><strong><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Subscribers: {{ topic.name }}</strong></h1>
+  </div>
+  <div class="panel-body">
+  <div class="list-group">
+    <p style="text-align: left;">Subscribers Search: <input id="filter" type="text" autofocus /> <span>  &nbsp;  &nbsp; Total: <strong>{{total}}</strong> subscribers</span><!--<span><a class="clear-filter" title="clear filter" onclick="history.go(0)" href="javascript:void(0);">[clear]</a> | <a class="toggle" href="javascript:void(0);" data-trigger="footable_expand_all">[expand all]</a><a class="toggle" style="display: none;" href="javascript:void(0);" data-trigger="footable_collapse_all">[collapse all]</a></span>--></p>
+    <table class="footable metro-blue toggle-square-filled toggle-medium table" data-filter="#filter" data-filter-text-only="true" data-sort="true" data-page-size="5">
+        <thead>
+            <th data-sort-initial="true"><strong>Last Name</strong></th>
+            <th><strong>First Name</strong></th>
+            <th><strong>Cell</strong></th>
+            <th><strong>Student ID</strong></th>
+            <th style="width:120px"><strong>Edit / Delete?</strong></th>
+        </thead>
+        {% for subscriber in subscribers %}
+        <form action="{% url 'removeSubscriber' %}" id="form{{ forloop.counter }}" method="post">
+        {% csrf_token %}
+            <input type="hidden" name="SubscriptionArn" value="{{ subscriber.SubscriptionArn }}">
+            <input type="hidden" name="cell_phone" value="{{ subscriber.cell_phone }}">
+            <input type="hidden" name="topic_arn" value="{{ topic.arn }}">
+            <tr title="Edit user: {{ subscriber.first_name }} {{ subscriber.last_name }}">
+            <td><span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                <a href="{% url 'editSubscriber' subscriber.cell_phone %}" style="color: #000; border-bottom: 0px">
+                    {{ subscriber.last_name }}</a></td>
+            <td>{{ subscriber.first_name }}</td>
+            <td>{{ subscriber.cell_phone }}</td>
+            <td>{{ subscriber.student_id }}</td>
+            <td style="text-align:center"><a href="{% url 'editSubscriber' subscriber.cell_phone %}"><i class="glyphicon glyphicon-pencil"></i></a> &nbsp; <a href="#" onClick="$('#form{{ forloop.counter }}').submit();"><i class="glyphicon glyphicon-remove"> </i></a></td>
+        </tr></form>
+        {% endfor %}
+    </table>
+  </div>
+  <div class="row">
+      <span class="col-lg-3"><a href="{% url 'addSubscribers' topic.arn %}"><i class="glyphicon glyphicon-plus"> Add Subscriber</i></a></span>
+      <span class="col-lg-7">&nbsp;</span>
+      <span class="col-lg-2" style="text-align: right"><a href="{% url 'uploadSubscribers' topic.arn %}"><i class="glyphicon glyphicon-import"> Bulk Upload</i></a></span>
+  </div>
+
+
+  </div>
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,41 @@
+{% extends "theme/pioneeralert/base-admin.html" %}
+{% block content %}
+    <br/>
+    <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'adminIndex' %}">Home</a></li>
+        <li><a href="{% url 'manageTopics' %}">Manage Groups</a></li>
+        <li class="active">New Group</li>
+    </ol>
+
+    <div class="panel panel-primary blog-main">
+        <div class="panel-heading">
+            <h1 class="panel-title">
+                <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
+                Group Settings
+            </h1>
+        </div>
+        <div class="panel-body">
+            <form action="." method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
+                    <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save Group
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+{#    <script>#}
+{#        $("label[for='id_topic_name']").attr("id", "id_topic_name");#}
+{#        $("label[for='id_topic_owner']").attr("id", "id_topic_owner");#}
+{#        $('#id_topic_name').text(function(index, text) {#}
+{#          return text.replace("Topic", "Group");#}
+{#        });#}
+{#        $('#id_topic_owner').text(function(index, text) {#}
+{#          return text.replace("Topic", "Group");#}
+{#        });#}
+{#    </script>#}
+{% endblock %}
+

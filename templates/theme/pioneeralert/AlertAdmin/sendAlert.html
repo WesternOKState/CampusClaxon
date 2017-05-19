@@ -1,0 +1,310 @@
+{% extends "theme/pioneeralert/base-admin.html" %}
+{% block content %}
+    <br/>
+    <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'adminIndex' %}">Home</a></li>
+        <li class="active">Send Alert</li>
+    </ol>
+
+    <div class="row" style="width: 40%; margin: -10px auto 10px;">
+    </div><!--/row-->
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h1 class="panel-title">
+                        <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> &nbsp; Enter Message To Send:
+                    </h1>
+                </div>
+                <div class="panel-body">
+                    <form action="." method="post" id="sendAlert">
+                        {% csrf_token %}
+                        <div class="input-separator">
+                            <label for="id_template">
+                                <span class="glyphicon glyphicon-folder-open"
+                                  aria-hidden="true"></span> &nbsp;Message {{ form.template.label }}:
+                            </label>
+                            <span class="helpico" title="Template is used to pre-form a message">
+                                <span class='glyphicon glyphicon-question-sign' aria-hidden='true'></span>
+                            </span>
+                            <select id="id_template" name="template" class="form-control" style="display:inline-block" required>
+                                    <option value="0" >
+                                        ------------
+                                    </option>
+                                {% for template in templates %}
+                                    <option value="{{ template.id }}"
+                                            {% if template.selected == 'True' %}Selected{% endif %}>
+                                        {{ template.template_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <a href="{% url 'newTemplate' %}" class="btn btn-info" style="display:inline-block"
+                                title="Add new template.">
+                                <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
+                                <span class="hidden">Add new template</span>
+                            </a>
+                        </div>
+                        <div class="input-separator">
+                            <label for="id_topic">
+                                <span class="glyphicon glyphicon-th" aria-hidden="true"></span> &nbsp;Send to this Group:
+{#                                <a href="{% url 'newTemplate' %}" title="Add a Group" style="float:right">#}
+{#                                    <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>#}
+{#                                </a>#}
+                            </label>
+                            <span class="helpico" title="Select which group to send this notification.">
+                                <span class='glyphicon glyphicon-question-sign' aria-hidden='true'></span>
+                            </span>
+                            <select id="id_topic" name="topic" class="form-control" style="display:inline-block" required>
+                                <option value="">
+                                    ------------
+                                </option>
+                                {% for topic in topics %}
+                                    <option value="{{ topic.topic_arn }}" data-display_name="{{ topic.display_name }}"
+                                        {% if topic.selected == 'True' %}Selected{% endif %}>
+                                        <span id="display_name" class="hidden">{{ topic.display_name }}</span> :
+                                        {{ topic.topic_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <a href="{% url 'newTopic' %}" class="btn btn-info" style="display:inline-block"
+                                title="Add new group.">
+                                <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
+                                <span class="hidden">Add new group</span>
+                            </a>
+                        </div>
+                        <div class="input-separator">
+                            <label for="id_message">
+                                <span class="glyphicon glyphicon-bullhorn"
+                                  aria-hidden="true"></span> &nbsp;{{ form.message.label }}:
+                            </label>
+                            <span class="helpico" title="Send a text notification / email to everyone subscribed to the selected group.">
+                                <span class='glyphicon glyphicon-question-sign' aria-hidden='true'></span>
+                            </span>
+                            {{ form.message }}
+                            {#        <textarea class="form-control"  id="id_message" maxlength="140" name="message" rows="5" required="">#}
+                            {#            {{ message }}#}
+                            {#        </textarea>#}
+                            <div style="font-size: 15px;">
+                                <span id="maxchars"></span>
+                                <span id="chars"></span> characters remaining
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success" id="submitbtn">
+                            <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> &nbsp; Send Alert
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4 2col-sm-offset-1 blog-sidebar">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h1 class="panel-title">
+                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> &nbsp; Message Preview
+                    </h1>
+                </div>
+                <div class="panel-body">
+                    <div class="messagePreview">
+                        <img src="https://www.wosc.edu/img/pas/cellPhoneEdited.png" alt="cell phone preview" class="cellPhone">
+                        <div class="containMessage">
+                            <div class="prefix">{{ display_name }}</div>
+                            <div class="message">{{ message }}</div>
+                        </div>
+                    </div>
+                </div><!--/panel-body-->
+            </div><!--/panel-->
+        </div><!--/blog-sidebar-->
+
+    </div><!--/row-->
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h1 class="modal-title" id="myModalLabel">Send Text Message?</h1>
+      </div>
+      <div class="modal-body">
+        <h2>Are you sure you want to send this mass text message?</h2>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="btn-modal-submit">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+    <script type="text/javascript">
+        $('.cellPhone,.containMessage').attr('title','This message preview is a mock-up message on a phone, actual messages may look different.');
+
+        $("#id_topic").change(function () {
+            var display_name = $('#id_topic').find('option:selected').attr('data-display_name');
+            $('.prefix').html(display_name + '>');
+            countChars();
+        })
+{#        $("#id_template").change(function () {#}
+{#            var templateid = $('#id_template').val();#}
+{#            window.location.href = "{% url 'Send Alert' %}?template=" + templateid;#}
+{#        })#}
+        $("#id_template").change(function () {
+
+            var templateid = $('#id_template').val();
+	 		if (templateid != ""){
+            	window.location.href = "{% url 'Send Alert' %}?template=" + templateid;
+	 		}
+	 		else {
+				$('#id_topic').val('0');
+				$('id_message').html('');
+			}
+        })
+
+        $("#btn-modal-submit").click(function() {
+            $("form[id='sendAlert']").submit(); // Form Submission
+        });
+
+        // Character Remaining jQuery
+        $("#id_message").attr("maxlength", 140);
+        $("#id_message").attr("rows", 4);
+        $("#id_message").html("{{ message }}");
+{#        $("#id_message").prepend("{{ display_name }}");#}
+{#        var displaynamePrefix = $("#display_name").val().length;#}
+
+        function countChars(){
+            var maxLength = 140;
+            $("#maxchars").html(maxLength);
+            var templateCount = $("#id_message").val().length + $('.prefix').html().length;
+            var messageRemaining = maxLength - templateCount;
+            $("#chars").html(messageRemaining);
+        }
+
+        $(document).ready(function () {
+            countChars();
+            $('#id_message').keyup(function () {
+                countChars();
+            });
+        });
+
+        $('textarea.form-control:not(.focus)').keyup(function(){
+
+            var value = $(this).val();
+            var contentAttr = $(this).attr('name');
+
+            $('.'+contentAttr+'').html(value.replace(/\r?\n/g,'<br/>'));
+
+        })
+    </script>
+
+
+    <style>
+        .blog-sidebar {
+            opacity: 1;
+        }
+        .glyphicon {
+            padding-right:0
+        }
+        .btn {
+            margin-bottom:0
+        }
+        .helpico {
+            color:#bf1c1c
+        }
+        .helpico:hover {
+            color:red
+        }
+        #id_template, #id_topic {
+            width:89%
+        }
+        .blog-main .panel-body {
+            background-color: #fff8f8
+        }
+        .input-separator {
+            margin: 28px 8px
+        }
+        .input-separator:first-of-type {
+            margin: 0 8px
+        }
+        .topic, .template {
+            font-size: 12px
+        }
+        textarea.form-control {
+            font-size: x-large;
+            padding: 18px
+        }
+        #maxchars {
+            color:#aaa;
+            font-style: italic;
+            float:right
+        }
+        #maxchars:after {
+            content: " character MAX"
+        }
+        .messagePreview {
+            position: relative;
+            width: 100%;
+            #margin: 20px 20px -15px;
+            font-size: 16px;
+        }
+        .prefix {
+            float:left;
+        }
+        .message {
+            #width:100%;
+            max-width:202px;
+            text-overflow: ellipsis;
+        }
+        .containMessage {
+            position: absolute;
+            top: 88px;
+            left: 18px;
+            width: 202px;
+            #margin: 90px 0 0 85px;
+        }
+        .cellPhone {
+            width: 100%;
+            max-width: 239px;
+        }
+        #submitbtn {
+            float:right;
+            margin-bottom:15px;
+            margin-right: 10px
+        }
+
+        @media (min-width: 768px) and (max-width: 991px) {
+            .message {
+                max-width: 153px;
+            }
+            .containMessage {
+                font-size: 12px;
+                top: 69px;
+                width: 153px;
+            }
+            .cellPhone {
+                #width: 49%;
+                #max-width: inherit;
+            }
+            #id_message {
+                font-size:18px
+            }
+        }
+        @media (max-width: 768px){
+            #id_message {
+                font-size:4vw
+            }
+        }
+        @media (max-width: 288px){
+            .blog-sidebar {
+                display:none
+            }
+        }
+    </style>
+
+{% endblock %}
+

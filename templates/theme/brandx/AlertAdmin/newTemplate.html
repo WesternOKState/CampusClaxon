@@ -1,0 +1,227 @@
+{% extends "theme/brandx/base-admin.html" %}
+{% block content %}
+    <br/>
+    <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'adminIndex' %}">Home</a></li>
+        <li><a href="{% url 'manageTemplates' %}">Manage Templates</a></li>
+        <li class="active">New Template</li>
+    </ol>
+
+    <div class="panel panel-primary blog-main">
+        <div class="panel-heading">
+            <h1 class="panel-title">
+                <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+                &nbsp;Template Settings
+            </h1>
+        </div>
+        <div class="panel-body">
+            <form action="." method="post">
+                {% csrf_token %}
+            <div style="color:red">{{ form.errors }}</div>
+            <div class="input-separator">
+                <label for="id_template_name">{{ form.template_name.label }}</label>:
+                {{ form.template_name }}
+            </div>
+            <div class="input-separator">
+                <label for="id_topic_name">Group</label>:
+                <select class="form-control" id="id_topic_name" name="topic_name" required="">
+                    <option value="" selected="selected">---------</option>
+                    {% for topic in topics %}
+                        <option value="{{ topic.arn }}" data-display_name="{{ topic.display_name }}">
+                            <span id="display_name" class="hidden2">{{ topic.display_name }}</span> :
+                            {{ topic.topic_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-separator">
+                <label for="id_default_message">{{ form.default_message.label }}</label>:
+                {{ form.default_message }}
+                <div style="font-size: 15px;">
+{#                    <span id="chars"></span> characters remaining#}
+                    <span id="maxchars"></span> <span class="test hidden"></span>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save Template
+            </button>
+            </form>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+{##}
+{#    $("#id_template").change(function () {#}
+{#        var templateid = $('#id_template').val();#}
+{#        window.location.href = "{% url 'Send Alert' %}" + templateid;#}
+{#    })#}
+{##}
+{#    var maxLength = 140;#}
+{#    $('#id_default_message').keyup(function () {#}
+{#        var length = $(this).val().length;#}
+{#        var length = maxLength - length;#}
+{#        $('#chars').text(length);#}
+{#    });#}
+{##}
+{#    $("#id_default_message").attr("maxlength", 140);#}
+{#    $("#id_default_message").attr("rows", 4);#}
+{#    $("#id_default_message").html("{{ message }}");#}
+{##}
+{#    $("#id_topic").change(function () {#}
+{#        var display_name = $('#id_topic').find('option:selected').attr('data-display_name');#}
+{#        $('.prefix').html(display_name + '>');#}
+{#        countChars();#}
+{#    })#}
+{##}
+{#    $("#id_template").change(function () {#}
+{##}
+{#        var templateid = $('#id_template').val();#}
+{#        if (templateid != ""){#}
+{#            window.location.href = "{% url 'Send Alert' %}?template=" + templateid;#}
+{#        }#}
+{#        else {#}
+{#            $('#id_topic').val('0');#}
+{#            $('id_message').html('');#}
+{#        }#}
+{#    })#}
+{##}
+{#    $("#btn-modal-submit").click(function() {#}
+{#        $("form[id='sendAlert']").submit(); // Form Submission#}
+{#    });#}
+{##}
+{#    // Character Remaining jQuery#}
+{#    $("#id_default_message").attr("maxlength", 140);#}
+{#    $("#id_default_message").attr("rows", 4);#}
+{#    $("#id_default_message").html("{{ message }}");#}
+{##}
+{#    $('select#id_topic').change(function() {#}
+{#        $('textarea').val($(this.options[this.selectedIndex]).attr('data-display_name') + ">");#}
+{#        $('.test').html($(this.options[this.selectedIndex]).attr('data-display_name') + ">");#}
+{#    });#}
+{##}
+{#    $("#maxchars").html(maxLength);#}
+{#    $("#chars").html(maxLength);#}
+{#    ----------#}
+{#        var displaynamePrefix = $("#display_name").val().length;#}
+
+        var maxLength = 140;
+        $("#maxchars").html(maxLength);
+        $("#chars").html(maxLength);
+{#        $('textarea').keyup(function() {#}
+{#          var length = $(this).val().length;#}
+{#          var length = maxLength-length;#}
+{#          $('#chars').text(length);#}
+{#        });#}
+
+{#    function countChars(){#}
+{#        var maxLength = 140;#}
+{#        var length = 140;#}
+{#        var prefixlength = $(".prefix").val().length;#}
+{#        $("#maxchars").html(maxLength);#}
+{#        var templateCount = $("#id_default_message").val().length + prefixlength;#}
+{#        var messageRemaining = maxLength - templateCount;#}
+{#        $("#chars").html(messageRemaining);#}
+{#    }#}
+
+{#    $(document).ready(function () {#}
+{#        countChars();#}
+{#        $('#id_message').keyup(function () {#}
+{#            countChars();#}
+{#        });#}
+{#    });#}
+{#------#}
+{#    $('textarea.form-control:not(.focus)').keyup(function(){#}
+{##}
+{#        var value = $(this).val();#}
+{#        var contentAttr = $(this).attr('name');#}
+{##}
+{#        $('.'+contentAttr+'').html(value.replace(/\r?\n/g,'<br/>'));#}
+{##}
+{#    })#}
+
+</script>
+
+
+    <style>
+        .blog-main .panel-body {
+            background-color: #fff8f8
+        }
+        .input-separator {
+            margin: 28px 8px
+        }
+        .input-separator:first-of-type {
+            margin: 0 8px
+        }
+        textarea.form-control {
+            font-size: x-large;
+            padding: 18px
+        }
+        .glyphicon {
+            padding-right:0
+        }
+        .btn {
+            margin-bottom:0
+        }
+        .blog-main .panel-body {
+            background-color: #fff8f8
+        }
+        .input-separator {
+            margin: 28px 8px
+        }
+        .input-separator:first-of-type {
+            margin: 0 8px
+        }
+        .topic, .template {
+            font-size: 12px
+        }
+        textarea.form-control {
+            font-size: x-large;
+            padding: 18px
+        }
+        #maxchars {
+            color:#aaa;
+            font-style: italic;
+            float:right
+        }
+        #maxchars:after {
+            content: " character MAX"
+        }
+        #submitbtn {
+            float:right;
+            margin-bottom:15px;
+            margin-right: 10px
+        }
+
+        @media (min-width: 768px) and (max-width: 991px) {
+            .message {
+                max-width: 153px;
+            }
+            .containMessage {
+                font-size: 12px;
+                top: 69px;
+                width: 153px;
+            }
+            .cellPhone {
+                #width: 49%;
+                #max-width: inherit;
+            }
+            #id_message {
+                font-size:18px
+            }
+        }
+        @media (max-width: 768px){
+            #id_message {
+                font-size:4vw
+            }
+        }
+        @media (max-width: 288px){
+            .blog-sidebar {
+                display:none
+            }
+        }
+    </style>
+
+{% endblock %}
+

@@ -1,0 +1,16 @@
+/* #### Texture for white background #### */
+body {
+    background: #fff url(/static/theme/brandx/images/APPS-main-pattern-lighter.png);
+}
+/* #### Header COLOR, BORDER COLOR, & GRADIENT TEXTURE #### */
+.navbar-inverse {
+    background: #5d5d5d url(/static/theme/brandx/images/APPS-header.png) 0 bottom repeat-x;
+    border-bottom: 5px solid #000;
+}
+/* #### Optional transparent seal for inner panel body #### */
+.panel-danger .panel-body {
+    background: #fffbfb url(/static/theme/brandx/images/BrandX-seal-transparent2.png) center top no-repeat;
+}
+.panel-success .panel-body {
+    background: #fdfffb url(/static/theme/pioneeralert/images/BrandX-seal-transparent2.png) center top no-repeat;
+}

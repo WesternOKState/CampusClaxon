@@ -1,0 +1,88 @@
+{% extends "theme/brandx/base-subscriber.html" %}
+{% block content %}
+    <br/>
+    <div class="container">
+    <ol class="breadcrumb">
+        <li class="active">Home</li>
+    </ol>
+
+    <div class="row" style="width: 40%; margin: -10px auto 10px;">
+    </div><!--/row-->
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h1 class="panel-title" style="font-size:20px"><strong>Welcome, <span style="color:#4a4a4a">{{ user.first_name }}</span>, to the
+                        {%  include "theme/brandx/BRANDING-name.html" %} Alert System!</strong></h1>
+                </div>
+                <div class="panel-body">
+                    {#      <h4><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Manage P.A.S. <span style="font-size:11px; color: #797">(Pioneer Alert System)</span></h4>#}
+                    <div class="list-group">
+                    </div>
+                    <div class="list-group">
+                        {% for group in user.groups.all %}
+                            {% if group.name == "instructor" %}
+                                <a href="{% url 'send_message' %}" class="list-group-item list-group-item-success2" style="color:green">
+                                    <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> Send An Alert
+                                    <span style="font-size:10px">(Employee Only)</span>
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                        <a href="{% url 'viewLogs' %}" class="list-group-item">
+                            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Past Messages
+                            <span style="font-size:10px">(Message Log)</span>
+                        </a>
+                        <a href="{% url 'manageUserGroups' %}" class="list-group-item">
+                            <span class="glyphicon glyphicon-th" aria-hidden="true"></span> Manage Group Subscriptions
+                        </a>
+                        <a href="{% url 'manageAccount' %}" class="list-group-item list-group-item-warning2" style="color:#c79031">
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Manage Account
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-sm-3 2col-sm-offset-1 blog-sidebar">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title">
+{#                        <span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>#}
+                        {%  include "theme/brandx/BRANDING-name.html" %} Alert Help!
+                    </h1>
+                </div>
+                <div class="panel-body">
+                    {% for group in user.groups.all %}
+                        {% if group.name == "instructor" %}
+                            <div class="sidebar-module">
+                                <h2><span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>  Send an Alert</h2>
+                                <p>Send a text alert / notification to a group.</p>
+                            </div><!--/sidebar-module-->
+                        {% endif %}
+                    {% endfor %}
+                    <div class="sidebar-module">
+                        <h2><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Past Messages</h2>
+                        <p>View past sent alerts/notifications from your subscriptions.</p>
+                    </div><!--/sidebar-module-->
+                    <div class="sidebar-module">
+                        <h2><span class="glyphicon glyphicon-th" aria-hidden="true"></span> Manage Groups</h2>
+                        <p>Add / Remove groups that send you notifications.</p>
+                    </div><!--/sidebar-module-->
+                    <div class="sidebar-module">
+                        <h2><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Manage Account</h2>
+                        <p>Edit your personal information.</p>
+                    </div><!--/sidebar-module-->
+                    <!--/sidebar-module-->
+
+                </div><!--/panel-body-->
+            </div><!--/panel-->
+        </div><!--/blog-sidebar-->
+
+    </div><!--/row-->
+
+
+{% endblock %}
+

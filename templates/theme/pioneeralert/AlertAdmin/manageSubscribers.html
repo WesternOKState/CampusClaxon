@@ -1,0 +1,102 @@
+{% extends "theme/pioneeralert/base-admin.html" %}
+{% block content %}
+    <br/>
+    <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'adminIndex' %}">Home</a></li>
+        <li class="active">Manage Subscribers: {{ topic.name }}</li>
+    </ol>
+
+    <div class="panel panel-primary blog-main">
+        <div class="panel-heading">
+            <h1 class="panel-title">
+                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                <span class="glyphicon glyphicon-user" aria-hidden="true" style="float:left; margin-right:-11px"></span>
+                <span class="glyphicon glyphicon-user" aria-hidden="true" style="float:left; margin-right:-11px"></span>
+                All Subscribers
+            </h1>
+        </div>
+        <div class="panel-body">
+
+            <a href="{% url 'addSubscribers' %}" style="float:right" class="btn btn-success">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                Add New Subscriber (User)
+            </a>
+
+            <div class="list-group">
+                <p style="text-align: left;">
+                    <label for="filter">
+                        {{ total }} Subscribers to Search from:
+                    </label>
+                    <input id="filter" type="text" autofocus/>
+                    <!--<span>
+                        <a class="clear-filter" title="clear filter" onclick="history.go(0)" href="javascript:void(0);">
+                            [clear]
+                        </a> |
+                        <a class="toggle" href="javascript:void(0);" data-trigger="footable_expand_all">
+                            [expand all]
+                        </a>
+                        <a class="toggle" style="display: none;" href="javascript:void(0);" data-trigger="footable_collapse_all">
+                            [collapse all]
+                        </a>
+                    </span>-->
+                </p>
+                <table class="footable metro-blue toggle-square-filled toggle-medium table" data-filter="#filter"
+                       data-filter-text-only="true" data-sort="true" data-page-size="5">
+                    <thead>
+                    <th data-sort-initial="true"><strong>Last Name</strong></th>
+                    <th>
+                        First Name
+                    </th>
+                    <th>
+                        Cell
+                    </th>
+                    <th>
+                        Student ID
+                    </th>
+                    <th data-sortable="false" style="width:220px">
+                        Edit / Delete?
+                    </th>
+                    </thead>
+
+                    {% for subscriber in subscribers %}
+                        <form action="{% url 'removeAccount' subscriber.hash %}" id="form{{ forloop.counter }}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="cell_phone" value="{{ subscriber.cell_phone }}">
+                            <input type="hidden" name="hash" value="{{ subscriber.hash }}">
+
+                            <tr title="Edit user: {{ subscriber.first_name }} {{ subscriber.last_name }}">
+                                <td>
+                                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                                    {{ subscriber.last_name }}
+                                </td>
+                                <td>
+                                    {{ subscriber.first_name }}
+                                </td>
+                                <td class="blurry-text">
+                                    {{ subscriber.cell_phone }}
+                                </td>
+                                <td>
+                                    {{ subscriber.student_id }}
+                                </td>
+                                <td style="text-align:center">
+                                    <a class="btn btn-warning" href="{% url 'editSubscriber' subscriber.hash %}">
+                                        <i class="glyphicon glyphicon-pencil"></i> Edit
+                                    </a> &nbsp;
+                                    <a class="btn btn-danger" href="#"
+                                       onClick="$('#form{{ forloop.counter }}').submit();">
+                                        <i class="glyphicon glyphicon-remove"> </i> Remove
+                                    </a>
+                                </td>
+                            </tr>
+                        </form>
+                    {% endfor %}
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+
+{% endblock %}
+

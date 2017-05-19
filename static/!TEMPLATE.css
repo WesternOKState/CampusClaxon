@@ -1,0 +1,410 @@
+body {
+    background: #fff url(https://www.wosc.edu/img/APPS-main-pattern-lighter.png);
+}
+
+a {
+    color: #005600;
+    border-bottom: 1px dotted #777;
+}
+
+a.admin {
+    color: #F89797 !important;
+}
+
+a.admin:hover {
+    color: red !important;
+}
+
+a.user {
+    color: gold !important;
+}
+
+a.user:hover {
+    color: yellow !important;
+}
+
+.breadcrumb {
+    margin: 45px 0 14px
+}
+
+.breadcrumb > li > a:hover {
+    color: #0000EE;
+    border-bottom: none;
+}
+
+.breadcrumb li:nth-child(1):before {
+    content: "Breadcrumbs: \00a0 ";
+    font-style: italic
+}
+
+.navbar-brand {
+    padding: 15px 0 15px 15px;
+}
+
+.glyphicon {
+    padding-right: 5px
+}
+
+.blog-main .panel-body {
+    background: #fffbfb url(https://www.wosc.edu/img/seal651.png) center top no-repeat;
+}
+
+.panel {
+    font-family:  Verdana, sans-serif !important;
+    font-weight: normal;
+}
+
+.sidebar-module {
+    padding: 0 15px;
+}
+
+.sidebar-module h4 {
+    font-size: 15px;
+    margin-bottom: 6px;
+}
+
+.sidebar-module p {
+    font-style: italic;
+    font-size: 13px
+}
+
+.sidebar-module {
+    border-bottom:1px solid #ccc
+}
+
+.sidebar-module:last-child {
+    border-bottom: none
+}
+
+.blog-sidebar {
+    opacity: .6
+}
+
+.blog-sidebar:hover {
+    opacity: 1;
+    cursor: help
+}
+
+footer {
+    border-top: 1px solid #DDD;
+    padding-top: 50px;
+    margin-top: 50px;
+    border-radius: 10px;
+}
+
+footer .inner {
+    text-align: center
+}
+
+footer .inner p {
+    color: darkgreen;
+    font-size: 20px;
+}
+
+footer .inner li {
+    list-style: none;
+    font-size: 18px
+}
+
+.panel-primary {
+    border-color: #225C22;
+}
+
+.panel-primary > .panel-heading {
+    color: #fff;
+    background: #851313;
+    border-bottom: 5px solid #E4E4E4;
+}
+
+.panel-primary > .review {
+    background-color: brown !important
+}
+
+.panel-primary > .past {
+    background-color: grey !important
+}
+
+.panel.panel-info.past *:not(.btn):not(.glyphicon):not(.footable) {
+    background-color: #F4D2D2
+}
+
+.panel.panel-info.past > .panel-heading, .panel.panel-info.past > .panel-heading * {
+    background-color: #FF7373 !important
+}
+
+.navbar-inverse {
+    background: #225C22 url(https://www.wosc.edu/img/APPS-header.png) 0 bottom repeat-x;
+    border-bottom: 5px solid gold;
+}
+
+.navbar-inverse .navbar-nav > li > a:focus, .navbar-inverse .navbar-nav > li:hover > a, .navbar-inverse .navbar-nav > li > a:hover, .activeapp {
+    background-color: rgba(255, 255, 255, 0.11) !important;
+}
+
+.activeapp {
+    cursor: context-menu;
+    color: #fff !important;
+    border-right: 1px solid #6D6D6D;
+    border-left: 1px solid #6D6D6D;
+}
+
+.panel-primary > .final {
+    background-color: purple !important
+}
+
+.panel-primary > .rank {
+    background-color: teal !important
+}
+
+.panel-primary > .public {
+    background-color: #002CA8 !important
+}
+
+.panel-primary > .committee {
+    background-color: #936D16 !important
+}
+
+.panel-info {
+    border-color: #349E34;
+}
+
+.panel-info > .panel-heading {
+    color: #000;
+    background-color: #D4F2D4;
+    border-color: #349E34;
+}
+
+.panel-primary > .panel-heading .btn-primary {
+    background-color: #225C22;
+    border-color: #837F61
+}
+
+.panel-primary > .panel-heading .btn-primary:hover {
+    background-color: #080;
+    border-color: #000
+}
+
+.btn {
+    margin-bottom: 20px
+}
+
+/*.btn-primary {*/
+    /*color: #fff;*/
+    /*background-color: #080;*/
+    /*border-color: #050;*/
+/*}*/
+
+/*.btn-primary.active, .btn-primary.focus, .btn-primary:active, .btn-primary:focus, .btn-primary:hover, .open > .dropdown-toggle.btn-primary {*/
+    /*color: #FFF;*/
+    /*background-color: #050;*/
+    /*border-color: #000;*/
+/*}*/
+
+.btn:hover {
+    border-bottom: 1px solid transparent
+}
+
+.btn-block {
+    white-space: pre-wrap;
+}
+
+a.list-group-item:focus, a.list-group-item:hover {
+    background-color: #DCFFE0
+}
+
+.dropdown-menu .sub-menu {
+    left: 100%;
+    position: absolute;
+    top: 0;
+    visibility: hidden;
+    margin-top: -1px;
+}
+
+.dropdown-menu li:hover .sub-menu {
+    visibility: visible;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu {
+    margin-top: 0;
+}
+
+.navbar .sub-menu:before {
+    border-bottom: 7px solid transparent;
+    border-left: none;
+    border-right: 7px solid rgba(0, 0, 0, 0.2);
+    border-top: 7px solid transparent;
+    left: -7px;
+    top: 10px;
+}
+
+.navbar .sub-menu:after {
+    border-top: 6px solid transparent;
+    border-left: none;
+    border-right: 6px solid #fff;
+    border-bottom: 6px solid transparent;
+    top: 11px;
+    left: -6px;
+}
+
+.breadcrumb > .active:not(:first-child) {
+    color: red
+}
+
+.panel-primary .footable > thead > tr > th {
+    background-color: #fffaf7;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#fffaf7), to(#FFF));
+    background-image: -webkit-linear-gradient(top, #fffaf7, #FFF);
+    background-image: -moz-linear-gradient(top, #fffaf7, #FFF);
+    background-image: -ms-linear-gradient(top, #fffaf7, #FFF);
+    background-image: -o-linear-gradient(top, #fffaf7, #FFF);
+    background-image: linear-gradient(to bottom, #fffaf7, #FFF);
+}
+
+.panel-success .footable > thead > tr > th {
+    background-color: #f7fff8;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#f7fff8), to(#FFF));
+    background-image: -webkit-linear-gradient(top, #f7fff8, #FFF);
+    background-image: -moz-linear-gradient(top, #f7fff8, #FFF);
+    background-image: -ms-linear-gradient(top, #f7fff8, #FFF);
+    background-image: -o-linear-gradient(top, #f7fff8, #FFF);
+    background-image: linear-gradient(to bottom, #f7fff8, #FFF);
+}
+
+/*{#.breadcrumb li:nth-child(1)>a:before {#}*/
+/*{#    content: "\e021";    !* 00a0 *!  padding-right: 6px;#}*/
+/*{#    font-family: 'Glyphicons Halflings';#}*/
+/*{#}#}*/
+/*{#.breadcrumb li:nth-child(2)>a:before {#}*/
+/*{#    content: "\e043";    !* 00a0 *!  padding-right: 6px;#}*/
+/*{#    font-family: 'Glyphicons Halflings';#}*/
+/*{#}#}*/
+/*{#.breadcrumb li:nth-child(2)>a:after {#}*/
+/*{#    i#content: " for FY16/17"; #padding-left: 6px;#}*/
+/*{#}#}*/
+/*{#.breadcrumb li:nth-child(3)>a:before {#}*/
+/*{#    content: "\e137";    !* 00a0 *!  padding-right: 6px;#}*/
+/*{#    font-family: 'Glyphicons Halflings';#}*/
+/*{#}#}*/
+/*{#.active.breadcrumb li:nth-child(4):before, .breadcrumb li:nth-child(4)>a:before {#}*/
+/*{#    content: "\e210";    !* 00a0 *!  padding-right: 6px;#}*/
+/*{#    font-family: 'Glyphicons Halflings';#}*/
+/*{#}#}*/
+
+.panel-heading > p {
+    font-size: 18px
+}
+
+.blurry-text {
+    color: transparent;
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.blurry-text:hover {
+    color: inherit;
+    text-shadow: none !important;
+}
+
+tr:nth-child(odd) {
+    #background-color: #D8D2B8;
+    /* originally #E0D3A8 */
+}
+
+tr:nth-child(even) {
+    background-color: #F9F9F9;
+    /* originally #EADCAD */
+}
+
+tr:hover {
+    background-color: #EDE6CE;
+    /* originally #dcd0a0 */
+}
+
+tr {
+    font: normal 95% Arial;
+}
+
+.footable-row-detail {
+    font-size: 115%;
+}
+
+.footable-row-detail-row {
+    padding: 5px 0
+}
+
+.footable-row-detail-value {
+    padding-left: 8px
+}
+
+.blog-sidebar h2 {
+  font-size:15px
+}
+
+.footable-sorted, .footable-sorted-desc {
+    color: #7B7272;
+    border-bottom: 1px dotted #6B6B6B;
+    text-shadow: 2px 2px 0 white !important;
+}
+
+.footable.breakpoint > tbody > tr > td > span.footable-toggle {
+    font-size: 20px !important;
+    margin-top: -5px;
+    #padding-right: 2px !important;
+    #float: right;
+    padding-right: 12px !important;
+}
+
+tr.hover {
+    cursor: pointer;
+    background-color: #3ff
+}
+
+@media (max-width: 767px) {
+    div.row:first-of-type {
+        width: 81% !important;
+    }
+
+    .activities {
+        margin: -10px auto 35px !important
+    }
+
+    div.row:first-of-type > img {
+        max-width: 536px;
+        width: 100% !important;
+    }
+
+    .supervisor-text:after {
+        content: "Supervisor"
+    }
+}
+
+@media (min-width: 768px) and (max-width: 996px) {
+    div.row:first-of-type {
+        width: 76% !important;
+    }
+
+    .activities {
+        margin: -10px auto 35px !important
+    }
+
+    .supervisor-text:after {
+        content: "Supervisor"
+    }
+}
+
+@media (min-width: 997px) and (max-width: 1199px) {
+    div.row:first-of-type {
+        width: 60% !important;
+    }
+
+    .supervisor-text:after {
+        content: "Supervisor"
+    }
+}
+
+.printimgonly {
+    display: none
+}
