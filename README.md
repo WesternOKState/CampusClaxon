@@ -17,7 +17,7 @@ Utilizing Amazons Simple Notification Service, this program serves as a front en
   - Instructors
     - Allows for the sending of notifications to specific groups
   - Subscribers
-    - Account, notification and group management To allow for the easy adjustment of notification options
+    - Account, notification, and group management to allow for the easy adjustment of notification options
     
 ## Roadmap
 - Additional Notification Options
