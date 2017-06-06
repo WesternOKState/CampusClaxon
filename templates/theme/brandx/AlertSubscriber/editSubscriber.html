@@ -35,10 +35,11 @@
                                        value="{{ last_name }}" type="text" disabled>                            </div>
                             {#                    <p><span  id="cell_phone">{{ cell_phone }} &nbsp; <a href="{% url 'edit_cell_phone' cell_phone %}"><i class="glyphicon glyphicon-edit">[edit]</i></a></span></p>#}
                             <div class="input-row">
-                                <label for="id_personal_email">
-                                    Personal Email:
-                                </label>
-                                {{ form.personal_email }}
+                                <div for="id_student_id" class="labeled">
+                                    Student ID:
+                                </div>
+                                <div class="fake-input" title="Cannot change your Student ID number.">{{ student_id }}</div>
+                                {#                        <input class="form-control" id="id_student_id" maxlength="30" name="student_id" value="{{ student_id }}" type="text" disabled>#}
                             </div>
                             {% if authentication_type == "internal" %}
                                 <div class="input-row">
@@ -46,20 +47,22 @@
                                         Password:
                                     </label>
                                     {{ form.password }}
+                                    <div style="color:#5800ff; font-size:11px; font-style: italic; padding:2px 0">
+                                        For no password changes, leave this field blank.
+                                    </div>
                                 </div>
                             {% endif %}
                         </div><!--/col-->
                         <div class="col-sm-6">
                             <div class="input-row">
-                                <div for="id_student_id" class="labeled">
-                                    Student ID:
-                                </div>
-                                <div class="fake-input" title="Cannot change your Student ID number.">{{ student_id }}</div>
-                                {#                        <input class="form-control" id="id_student_id" maxlength="30" name="student_id" value="{{ student_id }}" type="text" disabled>#}
+                                <label for="id_personal_email">
+                                    Personal Email:
+                                </label>
+                                {{ form.personal_email }}
                             </div>
                             <div class="input-row">
                                 <label for="id_school_email">
-                                    WOSC Email:
+                                    School Email:
                                 </label>
                                 <input class="form-control" id="id_school_email" maxlength="30" name="school_email" type="text"
                                        value="{{ school_email }}" disabled>
@@ -68,7 +71,7 @@
                                 <div for="id_student_cell" style="display:block" class="labeled">
                                     Cell Phone:
                                 </div>
-                                <div class="fake-input cell" title="Please use the Edit Cell Phone link to the right">
+                                <div class="fake-input cell cellblur" title="Please use the Edit Cell Phone link to the right">
                                     {{ cell_phone }}
                                 </div>
                             {#                        <input class="form-control" id="id_student_cell" maxlength="30" name="student_cell" value="{{ cell_phone }}" type="text"  style="display:inline-block" disabled hidden> &nbsp;#}
@@ -146,7 +149,7 @@
         }
 
         .warning-text:after {
-            content: "By checking this checkbox, you will not receive any text notifications such as; weather updates, school closings, or even shooter on campus notifications.  \00000A  You will still be enrolled with email notifications.";
+            content: "By checking this checkbox, you will not receive any text notifications such as; weather updates, school closings, or other emergency campus notifications.  \00000A  You will still be enrolled with email notifications.";
             color:red;
             font-size:12px;
         }
@@ -263,6 +266,9 @@
                $('#myModalwarning').modal('show');
             };
           });
+
+        $('#id_student_id').addClass('blurry-text');
+        $('.fake-input').addClass('blurry-text');
 
     </script>
 

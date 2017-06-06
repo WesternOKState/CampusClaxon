@@ -1,0 +1,163 @@
+{% extends "theme/brandx/base-subscriber.html" %}
+{% block content %}
+    <br/>
+    <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'index' %}">Home</a></li>
+        <li class="active">Manage Group Subscriptions</li>
+    </ol>
+
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h1 class="panel-title">
+                <strong><span class="glyphicon glyphicon-th" aria-hidden="true"></span> Group Subscriptions</strong>
+            </h1>
+        </div>
+        <div class="panel-body">
+            <div class="list-group">
+                <table class="footable metro-blue toggle-square-filled toggle-medium table" data-filter="#filter"
+                       data-filter-text-only="true" data-sort="true" data-page-size="5">
+                    <thead>
+                    <th style="min-width:150px; text-overflow: ellipsis">
+                        Group Name
+                    </th>
+                    <th style="">
+                        Description
+                    </th>
+                    <th data-sort-initial="ascending" data-hide="phone" style="width:160px">
+                        Subscribe or <br />Un-Subscribe
+                    </th>
+                    </thead>
+                    {% for topic in topics %}
+                        <tr {% if topic.topic_type == 'required' %} title="This is a required group in the Pioneer Alert System" class="required-group"
+                        {% elif topic.is_subscribed == True %} title="You are subscribed to the {{ topic.topic_name|upper }} Group." style="background-color:#ecfde5;color:darkgreen"
+                        {% elif topic.is_subscribed == False %} title="You are NOT subscribed to the {{ topic.topic_name|upper }} Group."
+                        {% endif %} data-type="{{ topic.topic_type }}"
+                        >
+                            <td>
+                                <span class="glyphicon glyphicon-th" aria-hidden="true"></span> {{ topic.topic_name }}
+                                <br />
+                                <div class="yes-sub">
+                                    {% if topic.is_subscribed == True %}
+                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> You are Subscribed!
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                {{ topic.description }}
+                            </td>
+                            <td style="text-align:center" {% if topic.topic_type == 'required' %} title="This is a REQUIRED Group and cannot be un-subscribed." class="requiredG"{% endif %}>
+                            {% if topic.topic_type == 'required' %}
+                                <span class="hidden">1</span>
+                                    <span class="btn btn-success required">
+                                        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                                        <span class="required-text"></span>
+                                        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                                    </span>
+                            {% else %}
+                                {% if topic.is_subscribed == True %}
+                                    <span class="hidden">2</span>
+                                    <form method="post" action="{% url 'unsubscribe' %}" id="id_form-{{ topic.id }}">
+                                        {% csrf_token %}
+                                        <input type='hidden' name="id" id="id_id" value="{{ topic.id }}">
+                                        <input type='hidden' name="subscription_arn" id="id_subscription_arn" value="{{ topic.subscription_arn }}">
+                                        <a href='#' class="btn btn-danger unsub" onClick="$('#id_form-{{ topic.id }}').submit()" title="You are currently subscribed, Un-subscribe yourself from this Group?">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Un-Subscribe
+                                        </a>
+                                    </form>
+                                {% endif %}
+                                {% if topic.is_subscribed == False %}
+                                    <span class="hidden">3</span>
+                                    <form method="post" action="{% url 'subscribe' %}" id="id_form-{{ topic.id }}">
+                                        {% csrf_token %}
+                                        <input type='hidden' name="id" id="id_id" value="{{ topic.id }}">
+                                        <input type='hidden' name="subscription_arn" id="id_subscription_arn" value="{{ topic.subscription_arn }}">
+                                        <a href='#' class="btn btn-success sub" onClick="$('#id_form-{{ topic.id }}').submit()" title="You are currently NOT subscribed, Subscribe yourself to this Group?">
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Subscribe
+                                        </a>
+                                    </form>
+                                {% endif %}
+                            {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+
+    {#<script>#}
+    {#        $('tr').click(function () {#}
+    {#            window.location = $(this).find('a').attr('href');#}
+    {#        }).hover(function () {#}
+    {#            $(this).toggleClass('hover');#}
+    {#        });#}
+    {#</script>#}
+
+
+    <style>
+        .sub,.unsub {
+            display:block
+        }
+        .yes-sub {
+            color: green;
+            font-size: 10px;
+            text-align: center;
+            padding-top: 8px
+        }
+        .subscribe-text, .unsubscribe-text {
+            font-size:13px
+        }
+        .required-text:after {
+            content: "Required  ";
+            display: inline-block;
+            font-size:13px;
+            color:blue
+        }
+        .required {
+            display: block;
+            cursor: not-allowed;
+            background: #e6e6e6;
+            border-color:#ccc;
+        }
+        .required:hover {
+            display: block;
+            cursor: not-allowed;
+            background: #ddd;
+            border-color:#ccc
+        }
+        .requiredG .glyphicon {
+            padding: 0 5px;
+            color:blue
+        }
+        .required-group {
+            background-color: #f1efef !important;
+            color: darkgreen;
+            cursor: not-allowed;
+        }
+        .btn {
+            margin: 6px 0 9px;
+        }
+
+        @media (max-width: 767px) {
+            .sub-unsub {
+                float: none;
+                margin: 5px 0;
+            }
+        }
+
+        @media (max-width: 544px) {
+            .footable thead tr th {
+                max-width: 20px
+            }
+
+            .glyphicon-user {
+                margin-left: 10px
+            }
+        }
+    </style>
+
+{% endblock %}
+

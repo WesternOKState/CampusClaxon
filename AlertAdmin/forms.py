@@ -1,7 +1,7 @@
 from django import forms
 from .models import SUBSCRIBER_STATUS_CHOICES, TOPIC_TYPE_CHOICES, AUTH_CHOICES
 from django.contrib.auth.models import User
-from .models import Topic
+from .models import Topic, Setting
 
 # def topic_choices():
 #     choices = []
@@ -28,7 +28,10 @@ class SettingsForm(forms.Form):
         attrs={'class':'form-control','maxlength':'50'}))
     authentication_type = forms.CharField(widget=forms.Select(choices=AUTH_CHOICES,
         attrs={'class': 'form-control', 'maxlength': '50'}))
-
+    quick_alert_auth_code = forms.CharField(widget=forms.TextInput(
+        attrs={'class': 'form-control', 'maxlength': '100'}))
+    globaltopic = forms.ModelChoiceField(queryset=Topic.objects.filter(topic_type='required'), widget=forms.Select(
+        attrs={'class': 'form-control', 'maxlength': '50'}))
 
 class TemplateForm(forms.Form):
     topic_name = forms.CharField(widget=forms.Select(
@@ -42,13 +45,13 @@ class TemplateForm(forms.Form):
         attrs={'class':'form-control','maxlength':'160'}))
 
 
-class TopicForm(forms.Form):
-    topic_name = forms.CharField(max_length=100, widget=forms.TextInput(
-        attrs={'class':'form-control','maxlength':'100'}))
-    display_name = forms.CharField(max_length=100, widget=forms.TextInput(
-        attrs={'class':'form-control','maxlength':'100'}))
-    topic_owner = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.Select(
-        attrs={'class': 'form-control'}))
+# class TopicForm(forms.Form):
+#     topic_name = forms.CharField(max_length=100, widget=forms.TextInput(
+#         attrs={'class':'form-control','maxlength':'100'}))
+#     display_name = forms.CharField(max_length=100, widget=forms.TextInput(
+#         attrs={'class':'form-control','maxlength':'100'}))
+#     topic_owner = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.Select(
+#         attrs={'class': 'form-control'}))
 
 
 class NewTopicForm(forms.Form):
@@ -105,3 +108,19 @@ class AddSubscriberForm(forms.Form):
 
 class FileUploadForm(forms.Form):
     import_file = forms.FileField()
+
+class QuickAlertForm(forms.Form):
+    template = forms.CharField(widget=forms.Select(attrs={'class':'form-control'}), required=False)
+    message = forms.CharField(max_length = 140, widget=forms.Textarea(
+        attrs={'class':'form-control','maxlength':'140'}))
+    auth_code = forms.CharField(max_length=100, widget=forms.PasswordInput(
+        attrs={'class': 'form-control', 'maxlength': '100'}), required=True)
+
+
+    def clean(self):
+        print("################################")
+        my_settings = Setting.objects.all()[0]
+        cleaned_data = super(QuickAlertForm, self).clean()
+        cc_auth_code = cleaned_data.get('auth_code')
+        if my_settings.quick_alert_auth_code != cc_auth_code:
+                self.add_error('auth_code', "Please enter the correct authorization code.")

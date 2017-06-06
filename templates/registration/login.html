@@ -46,7 +46,7 @@
                                 {% csrf_token %}
                                 <input type="hidden" id="oneTime" name="oneTime" value="1">
                                 <input type="hidden" name="next" value="{% url 'index' %}">
-                                <input type="text" id="username" name="username" class="form-control" value="" required autofocus />
+                                <input type="text" id="username" name="username" class="form-control" placeholder="Email Address" required autofocus />
                                 <input type="password" id="password" name="password" class="form-control" required />
                                 <button class="btn btn-lg btn-default" style="color:black!important" type="submit"><span
                                         class="glyphicon glyphicon-lock"></span> Alert Sign in

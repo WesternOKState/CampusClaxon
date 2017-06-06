@@ -104,13 +104,13 @@
 
             <form action="." method="post">
                 {% csrf_token %}
-                <input type="hidden" name="topic" value="{{ template. }}">
+                <input type="hidden" name="topic" value="{{ template.id }}">
             <div class="input-separator">
                 <label for="id_template_name">{{ form.template_name.label }}</label>:
                 {{ form.template_name }}
             </div>
             <div class="input-separator">
-                <label for="id_topic">{{ form.topic.label }}</label>:
+                <label for="id_topic">Group Name</label>:
                 <select class="form-control" id="id_topic" name="topic" required="">
                     <option value="">---------</option>
                     {% for topic in topics %}
@@ -136,7 +136,7 @@
             </form>
         </div>
     </div>
-
+</div>
 
     <script type="text/javascript">
 
@@ -203,7 +203,7 @@
 
     function countChars(){
         var maxLength = 140;
-        var prefixlength = $(".prefix").val().length
+        var prefixlength = $(".prefix").val().length;
         $("#maxchars").html(maxLength);
         var templateCount = $("#id_default_message").val().length + prefixlength;
         var messageRemaining = maxLength - templateCount;

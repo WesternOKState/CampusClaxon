@@ -51,10 +51,10 @@
 {#                                </a>#}
                             </td>
                             <td>
-                                {{ topic.display_name }}
+                                {{ topic.display_name }}>
                             </td>
                             <td>
-                                {{ topic.description }}
+                                 {{ topic.topic_type|upper }} - {{ topic.description }}
                             </td>
                             <td style="text-align:center">
                                 <a href="{% url 'Send Alert' %}?topic={{ topic.id }}" class="btn btn-success" title="SEND MESSAGE TO {{ topic.topic_name }}">

@@ -1,0 +1,86 @@
+{% extends "theme/brandx/base-admin.html" %}
+{% load staticfiles %}
+{% block content %}
+<br />
+<div class="container">
+    <ol class="breadcrumb">
+      <li><a href="{% url 'adminIndex' %}">Home</a></li>
+      <li class="active">Edit Settings</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+            <div class="panel panel-primary blog-main">
+              <div class="panel-heading">
+                <h1 class="panel-title"><strong>{%  include "theme/brandx/BRANDING-name.html" %} Alert Advanced Settings</strong></h1>
+              </div>
+              <div class="panel-body">
+                <form action="." method="post">
+                    {%   csrf_token %}
+                    <p>
+                        {{ form.aws_security_key.label }}:
+                        {{ form.aws_security_key}}
+                    </p>
+                    <p>
+                        {{ form.aws_secret_key.label }}:
+                        {{ form.aws_secret_key }}
+                    </p>
+                    <p>
+                        {{ form.authentication_type.label }}:
+                        {{ form.authentication_type }}
+                    </p>
+                    <p>
+                        {{ form.theme_name.label }}:
+                        <select name="theme_name" id="id_theme_name" class="form-control">
+                            {% for theme in themes %}
+                                <option value="{{ theme.name }}" {% if theme.selected == 'True' %}selected{% endif %}>{{ theme.name|upper }} {% if theme.selected == 'True' %}(Current){% endif %}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save Settings
+                    </button>
+                </form>
+              </div>
+            </div>
+        </div>
+        <div class="col-sm-3 2col-sm-offset-1 blog-sidebar">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h1 class="panel-title">
+                        {%  include "theme/brandx/BRANDING-name.html" %} Alert Help!
+                    </h1>
+                </div>
+                <div class="panel-body">
+
+                    <div class="sidebar-module">
+                        <h2>
+                            Aws security key
+                        </h2>
+                        <p></p>
+                    </div><!--/sidebar-module-->
+                    <div class="sidebar-module">
+                        <h2>
+                            Aws secret key
+                        </h2>
+                        <p></p>
+                    </div><!--/sidebar-module-->
+                    <div class="sidebar-module">
+                        <h2>
+                            Authentication type
+                        </h2>
+                        <p></p>
+                    </div><!--/sidebar-module-->
+                    <div class="sidebar-module">
+                        <h2>
+                            Theme name
+                        </h2>
+                        <p></p>
+                    </div><!--/sidebar-module-->
+
+                </div><!--/panel-body-->
+            </div><!--/panel-->        </div><!--/blog-sidebar-->
+    </div><!--/row-->
+
+{% endblock %}
+

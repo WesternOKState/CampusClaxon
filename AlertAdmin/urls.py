@@ -2,9 +2,9 @@ from django.conf.urls import url, include
 from .views import IndexView, SendAlertView, ViewLogs, \
     EditSettingsView, ManageTemplates, EditTemplateView, NewTemplateView, SuccessView, removeTemplate, ManageTopics, \
     NewTopicView, EditTopicView, ManageTopicSubscribersView, NewSubscriberView, UploadSubscribersView, \
-    EditSubscriberView, syncSubscribersView, Launch, RemoveTopicView, \
+    EditSubscriberView, SyncSubscribersView, Launch, RemoveTopicView, \
     RemoveSubscriberView, FindUserView, FindUserByNameView, EditCellPhoneView, ManageSubscribersView, \
-    BrowseTopicSubscriberView, RemoveAccountView, ImportCourseView
+    BrowseTopicSubscriberView, RemoveAccountView, ImportCourseView, QuickAlertView
 
 urlpatterns = [
     url(r'^$', IndexView.as_view(), name="adminIndex"),
@@ -38,10 +38,11 @@ urlpatterns = [
     url(r'^editSubscriber/(?P<hash>[a-f0-9]+)/$', EditSubscriberView.as_view(), name="editSubscriber"),
     url(r'^editCellPhone/$', EditCellPhoneView.as_view(), name="edit_cell_phone"),
     url(r'^removeSubscriber/$', RemoveSubscriberView.as_view(), name="removeSubscriber"),
-    url(r'^syncSubscribers/$', syncSubscribersView.as_view(), name="Sync"),
+    url(r'^syncSubscribers/$', SyncSubscribersView.as_view(), name="Sync"),
     url(r'^findUser/$', FindUserView.as_view(), name="find_user"),
     url(r'^findUserByName/$', FindUserByNameView.as_view(), name="find_user_by_name"),
     url(r'^subscriber/', include('AlertSubscriber.urls')),
     url(r'^removeAccount/(?P<hash>[a-f0-9]+)/$', RemoveAccountView.as_view(), name="removeAccount"),
     url(r'^importClass/$', ImportCourseView.as_view(), name='import_course'),
+    url(r'^quickalert/', QuickAlertView.as_view(), name="quickalert"),
 ]

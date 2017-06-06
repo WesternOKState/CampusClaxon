@@ -11,7 +11,7 @@
         <div class="panel-heading">
             <h1 class="panel-title">
                 <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
-                Manage Groups (Topics)
+                Manage Groups (aka: Topics)
             </h1>
         </div>
         <div class="panel-body">
@@ -51,10 +51,10 @@
 {#                                </a>#}
                             </td>
                             <td>
-                                {{ topic.display_name }}
+                                {{ topic.display_name }}>
                             </td>
                             <td>
-                                {{ topic.description }}
+                                 {{ topic.topic_type|upper }} - {{ topic.description }}
                             </td>
                             <td style="text-align:center">
                                 <a href="{% url 'Send Alert' %}?topic={{ topic.id }}" class="btn btn-success" title="SEND MESSAGE TO {{ topic.topic_name }}">
@@ -77,6 +77,7 @@
             </div>
         </div>
     </div>
+</div>
 
 
 <style>

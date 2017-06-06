@@ -1,0 +1,35 @@
+{% extends "theme/brandx/base-admin.html" %}
+{% block content %}
+    <br/>
+    <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'adminIndex' %}">Home</a></li>
+        {#        <li><a href="{% url 'manageSubscribers' topic %}">Manage Subscribers</a></li>#}
+        <li class="active">Edit Subscriber</li>
+    </ol>
+
+    <div class="panel panel-primary blog-main">
+        <div class="panel-heading">
+            <h1 class="panel-title"><strong>User</strong></h1>
+        </div>
+        <div class="panel-body">
+            <form action="." method="post">
+                {% csrf_token %}
+                {{ form.as_p }} <br/>
+                <input class="btn btn-primary" type="submit" value="Save">
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/jquery.maskedinput.min.js"></script>
+    <script type="text/javascript">
+
+        $('#id_new_number').mask("9(999)999-9999", {placeholder: "1(580)555-1212"});
+
+
+    </script>
+
+
+
+{% endblock %}
+

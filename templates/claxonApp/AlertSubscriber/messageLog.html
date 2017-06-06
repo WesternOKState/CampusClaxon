@@ -1,0 +1,54 @@
+{% extends "theme/brandx/base-subscriber.html" %}
+{% block content %}
+    <br/>
+    <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'index' %}">Home</a></li>
+        <li class="active">Past Message Log</li>
+    </ol>
+
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h1 class="panel-title"><strong><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                Message Log</strong></h1>
+        </div>
+        <div class="panel-body">
+            <div class="list-group">
+                <table class="table table-hover footable metro-blue toggle-square-filled toggle-medium"
+                       data-sort="true">
+                    <thead>
+                        <th style="width:120px">
+                            Time Stamp
+                        </th>
+                        <th data-hide="phone">
+                            Group
+                        </th>
+                        <th style="">
+                            Message
+                        </th>
+{#                        <th data-hide="phone" style="width:140px">Initiator</th>#}
+                    </thead>
+                    {% for entry in log_entries|dictsort:"timestamp" %}
+                        <tr>
+                            <td title="Sent from {{ entry.initiator }}">
+                                {{ entry.timestamp }}
+                            </td>
+                            <td>
+                                <span class="glyphicon glyphicon-th" aria-hidden="true"></span> {{ entry.topic_name }}
+                            </td>
+                            <td style="color:green">
+                                <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> {{ entry.display_name }} {{ entry.message }}
+                            </td>
+{#                            <td>#}
+{#                                <span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{ entry.initiator }}#}
+{#                            </td>#}
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+

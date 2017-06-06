@@ -49,6 +49,11 @@ a.user:hover {
     background: #fffbfb url(https://www.wosc.edu/img/seal651.png) center top no-repeat;
 }
 
+.errorlist {
+    color:red;
+    font-style: italic;
+}
+
 .panel {
     font-family:  Verdana, sans-serif !important;
     font-weight: normal;

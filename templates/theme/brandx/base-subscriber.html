@@ -15,12 +15,14 @@
     <link rel="icon" href="https://www.wosc.edu/img/APPS-seal-P.ico">
 
     <!-- Bootstrap core CSS -->
+
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="{% static 'css/blog.css' %}" rel="stylesheet" media="screen">
     <link href="{% static 'css/select2.min.css' %}" rel="stylesheet">
     <!-- Custom styles for this template -->
-    <link href="/static/theme/brandx/css/!BRANDING.css" rel="stylesheet" type="text/css"/>
-    <link href="/static/theme/brandx/css/!TEMPLATE.css" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/!TEMPLATE.css' %}" rel="stylesheet" type="text/css"/>
+    <!-- Custom branding for this template -->
+    <link href="{% static 'theme/brandx/css/!BRANDING.css' %}" rel="stylesheet" type="text/css"/>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -31,7 +33,6 @@
     <![endif]-->
 </head>
 <body>
-<img src="/static/theme/brandx/images/BrandX-full-sm.png" alt="Logo Small (for print only)" class="printimgonly" style="display:none">
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
@@ -44,7 +45,7 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="{% url 'index' %}">
-                {%  include "theme/brandx/BRANDING-logo.html" %} {%  include "theme/brandx/BRANDING-name.html" %} <span style="font-size:14px" class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                {%  include "theme/brandx/BRANDING-logo-40x40.html" %} {%  include "theme/brandx/BRANDING-name.html" %} <span style="font-size:14px" class="glyphicon glyphicon-home" aria-hidden="true"></span>
             </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
@@ -66,6 +67,10 @@
                                 Subscriber
                             </a>
                         </li>
+                    {% endif %}
+                {% endfor %}
+                {% for group in user.groups.all %}
+                    {% if group.name == "admin" %}
                         <li>
                             <a href="{% url 'adminIndex' %}" class="admin">
                                 <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
@@ -82,13 +87,14 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li>
-                            <a href="{%  url 'manageUserGroups' %}" class="list-group-item">
-                                <span class="glyphicon glyphicon-th" aria-hidden="true"></span> Manage Groups
+                            <a href="{% url 'viewLogs' %}" class="list-group-item">
+                                <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Past Messages
+                                <span style="font-size:10px">(Message Log)</span>
                             </a>
                         </li>
                         <li>
-                            <a href="{% url 'viewLogs' %}" class="list-group-item">
-                                <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> <i>Past Messages</i>
+                            <a href="{%  url 'manageUserGroups' %}" class="list-group-item">
+                                <span class="glyphicon glyphicon-th" aria-hidden="true"></span> Manage Group Subscriptions
                             </a>
                         </li>
                         <li>
@@ -120,8 +126,11 @@
 <footer clas="blog-footer">
     <div class="inner">
         <p style="text-align:center">
-            <img src="/static/theme/brandx/images/BrandX.png" alt="Logo" style="max-width:400px; width:100%">
+            {%  include "theme/brandx/BRANDING-logo-400x120.html" %}
         </p>
+        <h3>
+            {%  include "theme/brandx/BRANDING-name.html" %} <span style="color:red">Alert</span> System
+        </h3>
     </div>
 </footer>
 <p>&nbsp;</p>
@@ -130,14 +139,14 @@
 
 
 <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="/static/js/custom.js" type="text/javascript"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="{% static 'js/custom.js' %}" type="text/javascript"></script>
 <!-- ### FOOTABLE CSS & JS ### -->
-<link href="/static/css/footable.core.css" rel="stylesheet" type="text/css"/>
-<link href="/static/css/footable.standalone.css" rel="stylesheet" type="text/css"/>
-<script src="/static/js/footable.js" type="text/javascript"></script>
-<script src="/static/js/footable.sort.js" type="text/javascript"></script>
-<script src="/static/js/footable.filter.js" type="text/javascript"></script>
+<link href="{% static 'css/footable.core.css' %}" rel="stylesheet" type="text/css"/>
+<link href="{% static 'css/footable.standalone.css' %}" rel="stylesheet" type="text/css"/>
+<script src="{% static 'js/footable.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/footable.sort.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/footable.filter.js' %}" type="text/javascript"></script>
 
 </body>
 </html>

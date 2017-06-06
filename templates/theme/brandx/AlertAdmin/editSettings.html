@@ -10,7 +10,7 @@
 
 <div class="panel panel-primary blog-main">
   <div class="panel-heading">
-    <h1 class="panel-title"><strong>{%  include "theme/brandx/BRANDING-name.html" %} Alert Advanced Settings</strong></h1>
+    <h1 class="panel-title"><strong>{%  include "theme/brandx/BRANDING-name.html" %} Advanced Settings</strong></h1>
   </div>
   <div class="panel-body">
     <form action="." method="post">
@@ -22,6 +22,14 @@
         <p>
             {{ form.aws_secret_key.label }}:
             {{ form.aws_secret_key }}
+        </p>
+        <p>
+            {{ form.quick_alert_auth_code.label }}: <span style="font-style:italic; color:#777">(For the <a href="{% url 'quickalert' %}">QuickAlert Page</a>)</span>
+            {{ form.quick_alert_auth_code }}
+        </p>
+        <p>
+            {{ form.globaltopic.label }}: <span style="font-style:italic; color:#777">(List of Groups displayed as Required)</span>
+            {{ form.globaltopic }}
         </p>
         <p>
             {{ form.authentication_type.label }}:
@@ -41,6 +49,19 @@
     </form>
   </div>
 </div>
+</div>
 
+{%  include 'registration/version.html' %}
+    
+    <style>
+        #id_quick_alert_auth_code {
+            text-shadow: 0 0 9px #000;
+            color: transparent;
+        }
+        #id_quick_alert_auth_code:focus {
+            text-shadow: none;
+            color: #000;
+        }
+    </style>
 {% endblock %}
 

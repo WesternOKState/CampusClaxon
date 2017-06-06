@@ -1,0 +1,114 @@
+{% extends "theme/brandx/base-admin.html" %}
+{% load staticfiles %}
+{% block content %}
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <div class="container">
+{#    <ol class="breadcrumb">#}
+{#        <li class="active">Home</li>#}
+{#    </ol>#}
+
+    <div class="row" style="width: 40%; margin: -10px auto 10px;">
+    </div><!--/row-->
+
+    <div class="row">
+        <div class="blog-main">
+
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h1 class="panel-title">
+                        FIRST TIME SETUP:  <br />Would you like to Opt-out of this course?
+                    </h1>
+                </div>
+                <div class="panel-body">
+                    <form action="." method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="subscription" id="id_topic" value="{{ subscription }}">
+                        <input type="hidden" name="hash" id="id_hash" value="{{ subscriber.hash }}">
+                        <input type="hidden" name="cell_phone" id="id_cell_phone" value="{{ subscriber.cell_phone }}">
+                        <div class="input-row">
+                            <label for="id_optout">
+                                Receive text messages from this course?
+                            </label>
+                                <input class="form-control" id="id_opt_out" name="opt_out" type="checkbox">
+                            <div class="warning-text">
+                                <i>You will still receive all other messages such as; weather updates, school closings, or even shooter on campus notifications.  (You can change this option later)</i>
+                            </div>
+                        </div>
+                        <div class="progress loading2">
+                          <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                            <span class="sr-only2">100% Course Loading Completed</span>
+                          </div>
+                        </div>
+                        <div class="input-row">
+                        <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save Text Settings
+                        </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-footer">
+                    <h1 class="panel-title">
+                        FIRST TIME SETUP:  <br />Would you like to Opt-out of this course?
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div><!--/row-->
+
+
+    <style>
+        .panel-footer {
+            color: #3c763d;
+            background: #dff0d8;
+        }
+        .panel-title {
+            text-align:center
+        }
+        .panel-body {
+            text-align:center;
+        }
+        .input-row {
+            margin: 60px auto;
+            width:100%;
+            max-width:600px;
+        }
+        #id_opt_out:after {
+            content: ' No';
+            float: right;
+            font-size: 27px;
+            margin-right: 38%;
+        }
+        .progress {
+            margin: 60px auto;
+            width:100%;
+            max-width:600px;
+            height: 30px;
+        }
+        .progress-bar {
+            line-height: 30px;
+        }
+        .warning-text {
+            font-size: 13px;
+        }
+        .warning-text:before {
+            content: "By checking this checkbox, you will not receive any text notifications for this course.";
+            color: red;
+            font-weight: bold;
+        }
+    @media (max-width: 480px){
+        .progress {
+            margin:5% auto;
+        }
+        #id_opt_out:after {
+            margin-right:inherit;
+        }
+    }
+    </style>
+
+{% endblock %}

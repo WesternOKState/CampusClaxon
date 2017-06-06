@@ -1,0 +1,282 @@
+{% extends "theme/pioneeralert/base-admin.html" %}
+{% block content %}
+    <br/>
+    <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'adminIndex' %}">Home</a></li>
+        <li class="active">QUICK ALERT</li>
+    </ol>
+
+    <div class="row" style="width: 40%; margin: -10px auto 10px;">
+    </div><!--/row-->
+
+    <div class="row">
+        <div class="blog-main">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h1 class="panel-title">
+                        <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> &nbsp; Enter Message To Send:
+                    </h1>
+                </div>
+                <div class="panel-body">
+                    <form action="." method="post" id="sendAlert">
+{#                    {{ form.message.value }}#}
+
+                        <div class="input-separator">
+                            <label for="id_template">
+                                <span class="glyphicon glyphicon-folder-open"
+                                  aria-hidden="true"></span> &nbsp;Message Template:
+                            </label>
+                            <select id="id_template" name="template" class="form-control" style="display:inline-block" required>
+                                    <option value="0" >
+                                        ------------
+                                    </option>
+                                {% for template in templates %}
+                                    <option value="{{ template.id }}"
+                                            {% if template.selected == 'True' %}Selected{% endif %}>
+                                        {{ template.template_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="input-separator">
+                            <label for="id_message">
+                                <span class="glyphicon glyphicon-bullhorn"
+                                  aria-hidden="true"></span> &nbsp;{{ form.message.label }}:
+                            </label>
+{#                            {{ form.message }}#}
+                            <textarea class="form-control"  id="id_message" maxlength="140" name="message" rows="5" required="">
+                                {{ form.message.value }}
+                            </textarea>
+                            <div style="font-size: 15px;">
+                                <span id="maxchars"></span>
+                                <span id="chars"></span>
+                            </div>
+                        </div>
+                        {% csrf_token %}
+                        {% if form.errors %}
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <div class="alert alert-danger" role="alert">
+                                        <h3 style="color:darkred; font-weight: bold">Form Error</h3>
+                                    <p><strong>{{ field.label }}:</strong> {{ error }} </p>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+                        <div style="text-align:right">
+                            {{ form.auth_code }}
+                            <button type="submit" class="btn btn-success" id="submitbtn">
+                                <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> &nbsp; Send Alert
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div><!--/row-->
+
+
+
+
+    <script type="text/javascript">
+        $('#id_auth_code').attr("placeholder", "Authorization Code");
+
+        function updateCountdown() {
+            // 140 is the max message length
+            var maxcharacters = 140;
+            var remaining = maxcharacters - jQuery('#id_message').val().length;
+            jQuery('#chars').text(remaining + ' characters remaining.');
+            jQuery('#maxchars').text(maxcharacters);
+        }
+
+        jQuery(document).ready(function($) {
+            $("#id_message").attr("placeholder", "Type your message here, or select a Template above.");
+            var typed_message = "{{ form.message.value }}";
+            if (typed_message != "None"){
+                $("#id_message").html(typed_message);
+            }
+            else {
+                $("#id_message").html("{{ message }}");
+            }
+
+            var error
+            updateCountdown();
+            $('#id_message').change(updateCountdown);
+            $('#id_message').keyup(updateCountdown);
+        });
+
+        $("#id_topic").change(function () {
+            var display_name = $('#id_topic').find('option:selected').attr('data-display_name');
+            $('.prefix').html(display_name + '>');
+            countChars();
+        })
+        $("#id_template").change(function () {
+            var templateid = $('#id_template').val();
+            window.location.href = "{% url 'Send Alert' %}?template=" + templateid;
+        })
+        $("#id_template").change(function () {
+
+            var templateid = $('#id_template').val();
+	 		if (templateid != ""){
+            	window.location.href = "{% url 'quickalert' %}?template=" + templateid;
+	 		}
+	 		else {
+				$('id_message').html('{{ message }}');
+			}
+        })
+
+        $("#btn-modal-submit").click(function() {
+            $("form[id='sendAlert']").submit(); // Form Submission
+        });
+
+        // Character Remaining jQuery
+{#        $("#id_message").attr("maxlength", 140);#}
+{#        $("#id_message").attr("rows", 4);#}
+{#        $("#id_message").html("{{ message }}");#}
+{#        $("#id_message").prepend("{{ display_name }}");#}
+        var displaynamePrefix = $("#display_name").val().length;
+
+        function countChars(){
+            var maxLength = 140;
+            $("#maxchars").html(maxLength);
+            var templateCount = $("#id_message").val().length + $('.prefix').html().length;
+            var messageRemaining = maxLength - templateCount;
+            $("#chars").html(messageRemaining);
+        }
+
+        $(document).ready(function () {
+            countChars();
+            $('#id_message').keyup(function () {
+                countChars();
+            });
+        });
+
+        $('textarea.form-control:not(.focus)').keyup(function(){
+
+            var value = $(this).val();
+            var contentAttr = $(this).attr('name');
+
+            $('.'+contentAttr+'').html(value.replace(/\r?\n/g,'<br/>'));
+
+        });
+
+    </script>
+
+
+    <style>
+        div:empty {
+           display: none;
+        }
+        .blog-sidebar {
+            opacity: 1;
+        }
+        .glyphicon {
+            padding-right:0
+        }
+        .btn {
+            margin-bottom:0
+        }
+        .helpico {
+            color:#bf1c1c
+        }
+        .helpico:hover {
+            color:red
+        }
+        .blog-main .panel-body {
+            background-color: #fff8f8
+        }
+        .input-separator {
+            margin: 28px 8px
+        }
+        .input-separator:first-of-type {
+            margin: 0 8px
+        }
+        .topic, .template {
+            font-size: 12px
+        }
+        textarea.form-control {
+            font-size: x-large;
+            padding: 18px
+        }
+        #maxchars {
+            color:#aaa;
+            font-style: italic;
+            float:right
+        }
+        #maxchars:after {
+            content: " character MAX"
+        }
+        .messagePreview {
+            position: relative;
+            width: 100%;
+            #margin: 20px 20px -15px;
+            font-size: 16px;
+        }
+        .prefix {
+            float:left;
+        }
+        .message {
+            #width:100%;
+            max-width:202px;
+            text-overflow: ellipsis;
+        }
+        .containMessage {
+            position: absolute;
+            top: 88px;
+            left: 18px;
+            width: 202px;
+            #margin: 90px 0 0 85px;
+        }
+        .cellPhone {
+            width: 100%;
+            max-width: 239px;
+        }
+        #submitbtn {
+            float:right;
+            margin-bottom:15px;
+            margin-right: 10px
+        }
+        #id_auth_code {
+            display: inline-block;
+            width: 40%;
+            margin-right: 10px;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) and (max-width: 991px) {
+            .message {
+                max-width: 153px;
+            }
+            .containMessage {
+                font-size: 12px;
+                top: 69px;
+                width: 153px;
+            }
+            .cellPhone {
+                #width: 49%;
+                #max-width: inherit;
+            }
+            #id_message {
+                font-size:18px
+            }
+        }
+        @media (max-width: 768px){
+            #id_message {
+                font-size:4vw
+            }
+        }
+        @media (max-width: 402px){
+            #submitbtn {
+                width: 100%;
+                margin-right: 0;
+            }
+            #id_auth_code {
+                width: 100%;
+            }
+        }
+    </style>
+
+{% endblock %}
+

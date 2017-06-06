@@ -55,6 +55,12 @@
                             {{ form.first_name.label }}:
                             {{ form.first_name }}
                         </p>
+                        {% if authentication_type == "internal" %}
+                            <p>
+                                {{ form.password.label }}:
+                                {{ form.password }}
+                            </p>
+                        {% endif %}
                         <p>
                             {{ form.cell_phone.label }}:
                             {{ form.cell_phone }}
@@ -78,8 +84,8 @@
                                 {{ form.opt_out }}
                             <div class="warning-text"></div>
                         </p>
-                        <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
-                            <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save User {% if topic %} to group{% endif %}
+                        <button type="submit" class="btn btn-success" id="submitbtn" style="float:right" title="{{ topic }}">
+                            <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save User {% if topic %} to this group{% endif %}
                         </button>
                     </form>
                 </div>

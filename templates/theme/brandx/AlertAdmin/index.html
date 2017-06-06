@@ -3,7 +3,7 @@
     <br/>
     <div class="container">
     <ol class="breadcrumb">
-        <li class="active">Home</li>
+        <li class="active">Admin Home</li>
     </ol>
 
     <div class="row" style="width: 40%; margin: -10px auto 10px;">
@@ -19,16 +19,13 @@
                     </h1>
                 </div>
                 <div class="panel-body">
-                    <div class="list-group" STYLE="margin-top:16px; margin-bottom: 40px;">
+                    <div class="list-group" STYLE="margin-top:22px; margin-bottom: 40px;">
                         <a href="{% url 'Send Alert' %}" class="list-group-item list-group-item-success2" style="color:green">
                             <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> Send An Alert
                         </a>
                         <a href="{% url 'alert' %}" class="list-group-item list-group-item-info2">
                             <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> View Alert Logs
                         </a>
-{#                        <a href="{% url 'manageAccount' %}" class="list-group-item" style="color:#c79031">#}
-{#                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit my Account#}
-{#                        </a>#}
                     </div>
 
                     <div class="list-group" style="margin-bottom:40px">
@@ -49,15 +46,16 @@
                         </a>
                     </div>
 
-                    <div class="list-group" style="margin-bottom:40px">
+                    <div class="list-group" style="margin-bottom:50px">
                         <a href="{% url 'editSettings' %}" class="list-group-item list-group-item-danger">
                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit Settings
                             <span style="font-size:10px">(ADVANCED)</span>
                         </a>
                     </div>
-
                 </div>
             </div>
+
+        {%  include 'registration/version.html' %}
 
         </div>
 
@@ -65,7 +63,7 @@
             <div class="panel panel-danger">
                 <div class="panel-heading">
                     <h1 class="panel-title">
-                        {%  include "theme/brandx/BRANDING-name.html" %} Alert Help!
+                        {%  include 'theme/'|add:theme|add:'/BRANDING-name.html' %} Alert Help!
                     </h1>
                 </div>
                 <div class="panel-body">
@@ -82,8 +80,6 @@
                         </h4>
                         <p>View past sent alerts.</p>
                     </div><!--/sidebar-module-->
-
-                    <p>&nbsp;</p>
 
                     <div class="sidebar-module">
                         <h4>
@@ -104,13 +100,11 @@
                         <p>Template is used to send a pre-formatted message.</p>
                     </div><!--/sidebar-module-->
 
-                    <p>&nbsp;</p>
-
                     <div class="sidebar-module">
                         <h4>
                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit Settings
                         </h4>
-                        <p>Edit the brand, colors, and shared key information.</p>
+                        <p>Edit the authentication type, brand, and shared key information.</p>
                     </div><!--/sidebar-module-->
                     <!--/sidebar-module-->
 

@@ -1,0 +1,71 @@
+{% extends "theme/brandx/base-admin.html" %}
+{% load staticfiles %}
+{% block content %}
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <div class="container">
+{#    <ol class="breadcrumb">#}
+{#        <li class="active">Home</li>#}
+{#    </ol>#}
+
+    <div class="row" style="width: 40%; margin: -10px auto 10px;">
+    </div><!--/row-->
+
+    <div class="row">
+        <div class="blog-main">
+
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h1 class="panel-title">
+                        FIRST TIME SETUP:  <br />Please wait while your class is being loaded...
+                    </h1>
+                </div>
+                <div class="panel-body">
+                    <img src="{% static 'images/loading.gif' %}" alt="Bouncing W logo" title="Bouncy Bouncy!  :)" class="loading2">
+                    <div class="progress loading2">
+                      <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%">
+                        <span class="sr-only2">50% Complete (success)</span>
+                      </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <h1 class="panel-title">
+                        FIRST TIME SETUP:  <br />Please wait while your class is being loaded...
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div><!--/row-->
+
+
+    <style>
+        .panel-footer {
+            color: #3c763d;
+            background: #dff0d8;
+        }
+        .panel-title {
+            text-align:center
+        }
+        .panel-body {
+            text-align:center;
+        }
+        .progress {
+            margin:0px auto 40px;
+            width:100%;
+            max-width:400px;
+        }
+    @media (max-width: 415px){
+        .loading {
+            margin:20% auto;
+        }
+    }
+    </style>
+
+{% endblock %}
+
+

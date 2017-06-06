@@ -91,6 +91,11 @@ class AlertTemplateView(TemplateView):
         self.template_name = get_theme(self.template_name)
         return super(AlertTemplateView, self).__init__()
 
+    def get_context_data(self, **kwargs):
+        context = super(AlertTemplateView, self).get_context_data()
+        context['theme'] = AlertAdmin.models.Setting.objects.all()[0].theme_name
+        return context
+
 
 class AlertFormView(FormView):
 
@@ -98,11 +103,20 @@ class AlertFormView(FormView):
         self.template_name = get_theme(self.template_name)
         return super(AlertFormView, self).__init__()
 
+    def get_context_data(self, **kwargs):
+        context = super(AlertFormView, self).get_context_data()
+        context['theme'] = AlertAdmin.models.Setting.objects.all()[0].theme_name
+        return context
+
 class AlertListView(ListView):
 
     def __init__(self):
         self.template_name = get_theme(self.template_name)
         return super(AlertListView, self).__init__()
 
+    def get_context_data(self, **kwargs):
+        context = super(AlertListView, self).get_context_data()
+        context['theme'] = AlertAdmin.models.Setting.objects.all()[0].theme_name
+        return context
 
 

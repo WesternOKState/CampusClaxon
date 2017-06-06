@@ -35,27 +35,30 @@
                             </label>
                             {{ form.last_name }}
                         </div>
+                        <div class="input-row">
+                            <label for="id_student_id">
+                                {{ form.student_id.label }}:
+                            </label>
+                            {{ form.student_id }}
+                        </div>
                         {% if authentication_type == "internal" %}
                             <div class="input-row">
                                 <label for="id_password" class="labeled">
                                     Password:
                                 </label>
                                 {{ form.password }}
+                                <div style="color:#5800ff; font-size:11px; font-style: italic; padding:2px 0">
+                                        For no password changes, leave this field blank.
+                                </div>
                             </div>
                         {% endif %}
+                    </div><!--/col-->
+                    <div class="col-sm-6">
                         <div class="input-row">
                             <label for="id_personal_email">
                                 {{ form.personal_email.label }}:
                             </label>
                             {{ form.personal_email }}
-                        </div>
-                    </div><!--/col-->
-                    <div class="col-sm-6">
-                        <div class="input-row">
-                            <label for="id_student_id">
-                                {{ form.student_id.label }}:
-                            </label>
-                            {{ form.student_id }}
                         </div>
                         <div class="input-row">
                             <label for="id_school_email">
@@ -64,9 +67,10 @@
                             {{ form.school_email }}
                         </div>
                         <div class="input-row">
-                            Cell Phone:
-                            <br />
-                            <div class="fake-input cell">{{ subscriber.cell_phone }} </div>
+                            <div class="labeled">
+                                Cell Phone:
+                            </div>
+                            <div class="fake-input cell cellblur">{{ subscriber.cell_phone }} </div>
                             <a href="#" data-toggle="modal" data-target="#myModal" class="btn btn-warning cell"
                                style="margin:0">
                                 <span class="glyphicon glyphicon-edit"></span>Edit Cell Phone
@@ -186,7 +190,11 @@
             max-width: 400px;
             font-family: Arial, sans-serif;
         }
-
+        .labeled {
+            max-width: 100%;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
         .fake-input {
             display: inline-block;
             width: 100%;
@@ -262,6 +270,9 @@
     <script type="text/javascript">
 
         $('#id_new_number').mask("9(999)999-9999", {placeholder: "{{ subscriber.cell_phone }}"});
+
+        $('#id_student_id').addClass('blurry-text');
+        $('.cellblur').addClass('blurry-text');
 
     </script>
 

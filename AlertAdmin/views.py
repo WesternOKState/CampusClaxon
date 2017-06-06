@@ -9,15 +9,23 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
-from django.views.generic import RedirectView
+from django.views.generic import ListView, TemplateView, RedirectView
 from django.views.generic import View
-
+from CampusClaxon import settings
 from LTI.lti import LtiLaunch
 from CampusClaxon.AmazonMessage import AmazonMessage
 from CampusClaxon.lib import get_hash, processFile, change_cell_number, AlertTemplateView, AlertFormView, AlertListView
-from .forms import MyMessageForm, SettingsForm, TemplateForm, TopicForm, SubscriberForm, FileUploadForm, \
-    AddSubscriberForm, NewTopicForm
+from .forms import MyMessageForm, SettingsForm, TemplateForm, SubscriberForm, FileUploadForm, \
+    AddSubscriberForm, NewTopicForm, QuickAlertForm
 from .models import MessageLog, Topic, Setting, Template, Subscriber, TopicSubscription
+from django.forms import ValidationError
+
+# Create your views here.
+
+
+# def get_template(template_name):
+#     return  "theme/" + Setting.objects.all()[0].theme_name + "/" + template_name
+
 
 class IndexView(GroupRequiredMixin,AlertTemplateView):
     group_required = "admin"
@@ -121,7 +129,7 @@ class EditSettingsView(GroupRequiredMixin, AlertFormView):
         else:
             theme = ''
         themes = []
-        res = os.listdir('templates/theme/')
+        res = os.listdir(settings.BASE_DIR + '/templates/theme/')
         for r in res:
             t = {}
             if r == theme:
@@ -136,9 +144,12 @@ class EditSettingsView(GroupRequiredMixin, AlertFormView):
     def get_initial(self):
         if Setting.objects.all().count() > 0:
             mySettings = Setting.objects.all()[0]
+            print(mySettings.quick_alert_auth_code)
             return {'aws_security_key': mySettings.aws_security_key,
                     'aws_secret_key': mySettings.aws_secret_key,
-                    'theme_name': mySettings.theme_name}
+                    'theme_name': mySettings.theme_name,
+                    'quick_alert_auth_code': mySettings.quick_alert_auth_code,
+                    'globaltopic': mySettings.global_topic }
 
     def form_valid(self, form):
         mySettings = Setting(pk=1)
@@ -146,6 +157,8 @@ class EditSettingsView(GroupRequiredMixin, AlertFormView):
         mySettings.aws_secret_key = self.request.POST['aws_secret_key']
         mySettings.theme_name = self.request.POST['theme_name']
         mySettings.authentication_type = self.request.POST['authentication_type']
+        mySettings.quick_alert_auth_code = self.request.POST['quick_alert_auth_code']
+        mySettings.global_topic = Topic.objects.get(id=self.request.POST['globaltopic'])
         mySettings.save()
         return super(EditSettingsView, self).form_valid(form)
 
@@ -338,6 +351,8 @@ class NewTopicView(GroupRequiredMixin, AlertFormView):
                         newSubscription.topic = myTopic
                         newSubscription.status = 'disabled'
                         newSubscription.save()
+            # TODO Throttle, AWS will only allow 100 subscriptions pre second. Might not be an issue, seems to take about a second a piece anyway.
+            # might need to build in some sort of confirmation to make sure everything stays sync'd
 
             if myTopic.topic_type == 'required':
                 subscribers = Subscriber.objects.all()
@@ -379,7 +394,7 @@ class RemoveTopicView(GroupRequiredMixin, RedirectView):
 class EditTopicView(GroupRequiredMixin, AlertFormView):
     group_required = "admin"
     raise_exception = True
-    form_class = TopicForm
+    form_class = NewTopicForm
     template_name = 'AlertAdmin/editTopic.html'
     success_url = "/success/manageGroups"
 
@@ -387,7 +402,9 @@ class EditTopicView(GroupRequiredMixin, AlertFormView):
         topic = Topic.objects.get(pk=self.kwargs['pk'])
         return {'topic_name': topic.topic_name,
                 'topic_owner': topic.topic_owner,
-                'display_name': topic.display_name}
+                'display_name': topic.display_name,
+                'description': topic.description,
+                'type': topic.topic_type}
 
     def get_context_data(self, **kwargs):
         context = super(EditTopicView, self).get_context_data()
@@ -401,6 +418,9 @@ class EditTopicView(GroupRequiredMixin, AlertFormView):
         if res == 0:
             myTopic = Topic.objects.get(pk=self.kwargs['pk'])
             myTopic.topic_owner = User.objects.get(pk=self.request.POST['topic_owner'])
+            myTopic.description = self.request.POST['description']
+            myTopic.display_name = self.request.POST['display_name']
+            myTopic.topic_type = self.request.POST['type']
             myTopic.save()
         else:
             # TODO Display Error
@@ -622,7 +642,7 @@ class NewSubscriberView(GroupRequiredMixin, AlertFormView):
         print(form.errors)
 
 
-class syncSubscribersView(GroupRequiredMixin, RedirectView):
+class SyncSubscribersView(GroupRequiredMixin, RedirectView):
     group_required = "admin"
     raise_exception = True
     url = '/success/manageTopicSubscribers'
@@ -722,6 +742,7 @@ class ManageSubscribersView(GroupRequiredMixin, AlertTemplateView):
         context['total'] = Subscriber.objects.all().count()
         return context
 
+
 class ImportCourseView(LoginRequiredMixin, AlertTemplateView):
     template_name = "AlertAdmin/loading.html"
 
@@ -745,6 +766,46 @@ class ImportCourseView(LoginRequiredMixin, AlertTemplateView):
     #                     TopicSubscription.objects.create(subscriber=subscriber, topic=topic,
     #                                                      subscription_arn='na', status='disabled')
     #     return redirect('subscribe')
+
+
+class QuickAlertView(AlertFormView):
+    template_name = "AlertAdmin/quickAlert.html"
+    form_class = QuickAlertForm
+
+    def get_context_data(self, **kwargs):
+        context = super(QuickAlertView, self).get_context_data(**kwargs)
+        templates = Template.objects.all().values()
+        if 'template' in self.request.GET:
+            my_template = self.request.GET['template']
+            for i, template in enumerate(templates):
+                if int(template['id']) == int(my_template):
+                    templates[i]['selected'] = "True"
+                    context['message'] = template['default_message']
+                else:
+                    templates[i]['selected'] = "False"
+        context['templates'] = Template.objects.all()
+        return context
+
+
+
+    def form_valid(self, form):
+        my_settings = Setting.objects.all()[0]
+        if self.request.POST['auth_code'] == my_settings.quick_alert_auth_code:
+            message_log = MessageLog()
+            message_log.initiator = self.request.user
+            message_log.topic_name = my_settings.global_topic.topic_name
+            message_log.message = self.request.POST['message']
+            message_log.timestamp = datetime.datetime.now()
+            message_log.save()
+            message_sender = AmazonMessage(my_settings.aws_security_key, my_settings.aws_secret_key)
+            topic = my_settings.global_topic.topic_arn
+            message_sender.send_message(self.request.POST['message'], topic)
+        else:
+            form.add_error('auth_code', "Incorrect Authorization Code")
+            return self.form_invalid(form)
+        self.success_url = reverse('quickalert')
+        return super(QuickAlertView, self).form_valid(form)
+
 
 def removeTopic(request, topic_id):
     Topic.objects.get(pk=topic_id).delete()

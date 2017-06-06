@@ -52,15 +52,7 @@ class MessageLog(models.Model):
         return self.message
 
 
-class Setting(models.Model):
-    aws_security_key = models.CharField(max_length=50)
-    aws_secret_key = models.CharField(max_length=150)
-    theme_name = models.CharField(max_length=50)
-    authentication_type = models.CharField(max_length=100, choices=AUTH_CHOICES, default="internal")
-    
 
-    def __str__(self):
-        return str(self.aws_security_key)
 
 
 class Topic(models.Model):
@@ -74,6 +66,17 @@ class Topic(models.Model):
 
     def __str__(self):
         return self.topic_name
+
+class Setting(models.Model):
+    aws_security_key = models.CharField(max_length=50)
+    aws_secret_key = models.CharField(max_length=150)
+    theme_name = models.CharField(max_length=50)
+    authentication_type = models.CharField(max_length=100, choices=AUTH_CHOICES, default="internal")
+    quick_alert_auth_code= models.CharField(max_length=100)
+    global_topic = models.ForeignKey(Topic)
+
+    def __str__(self):
+        return str(self.aws_security_key)
 
 class TopicSubscription(models.Model):
     subscriber = models.ForeignKey("Subscriber")

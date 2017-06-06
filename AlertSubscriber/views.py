@@ -8,6 +8,7 @@ from AlertAdmin.models import Subscriber, Topic, TopicSubscription, Setting, Mes
 from CampusClaxon.AmazonMessage import AmazonMessage
 from .forms import SubscriberForm, MyMessageForm
 from CampusClaxon.lib import change_cell_number, AlertTemplateView, AlertFormView
+import datetime
 
 
 
@@ -174,3 +175,18 @@ class SendMessageView(GroupRequiredMixin, AlertFormView):
         context['topics'] = Topic.objects.filter(topic_owner=self.request.user)
         return context
 
+    def form_valid(self, form):
+        my_settings = Setting.objects.all()[0]
+        message_log = MessageLog()
+        message_log.initiator = self.request.user
+        message_log.topic_name = self.request.POST['topic']
+        message_log.message = self.request.POST['message']
+        message_log.timestamp = datetime.datetime.now()
+        message_log.save()
+        message_sender = AmazonMessage(my_settings.aws_security_key, my_settings.aws_secret_key,)
+        res = message_sender.send_message(self.request.POST['message'], Topic.objects.get(id=self.request.POST['topic']).topic_arn)
+        print("*******************************************")
+        print(res)
+        print(self.request.POST['topic'])
+        self.success_url = reverse('index')
+        return super(SendMessageView, self).form_valid(form)

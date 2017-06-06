@@ -8,42 +8,51 @@
         <li class="active">New Group</li>
     </ol>
 
-    <div class="panel panel-primary blog-main">
-        <div class="panel-heading">
-            <h1 class="panel-title">
-                <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
-                Group Settings
-            </h1>
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+            <div class="panel panel-primary blog-main">
+                <div class="panel-heading">
+                    <h1 class="panel-title">
+                        <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
+                        Group Settings
+                    </h1>
+                </div>
+                <div class="panel-body">
+                    <form action="." method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
+                            <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save Group
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="panel-body">
-            <form action="." method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
-                    <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save Group
-                </button>
-            </form>
-        </div>
-    </div>
 
+        <div class="col-sm-3 2col-sm-offset-1 blog-sidebar">
+            {% include 'theme/brandx/AlertAdmin/helpText-Topic.html' %}
+        </div><!--/blog-sidebar-->
+    </div><!--/row-->
+</div>
 
+{#    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>#}
     <script>
-        $("label[for='id_topic_name']").attr("id", "id_topic_name");
-        $("label[for='id_topic_owner']").attr("id", "id_topic_owner");
-{#        $('#id_topic_name').text(function(index, text) {#}
-{#          return text.replace("Topic", "Group");#}
-{#        });#}
-        $('#id_topic_owner').text(function(index, text) {
+        $("label[for='id_topic_name']").attr("id", "id_topic_name_label");
+        $("label[for='id_topic_owner']").attr("id", "id_topic_owner_label");
+        $('#id_topic_name_label').text(function(index, text) {
+          return text.replace("Topic", "Group");
+        });
+        $('#id_topic_owner_label').text(function(index, text) {
           return text.replace("Topic", "Group");
         });
 
-    $(document).ready(function () {
-        $("#id_topic_name").keyup(function () {
-            if ($(this).val().match(/[ ]/g, "") != null) {
-                $(this).val($(this).val().replace(/[ ]/g, "_"));
-            }
+        $('#id_topic_name').keyup(function() {
+          $(this).val($(this).val().replace(/ +?/g, '_'));
         });
-    });
+        $('#id_display_name').keyup(function() {
+          $(this).val($(this).val().replace(/ +?/g, ''));
+        });
+        $("select option[value='select']").attr("disabled", "True");
     </script>
 {% endblock %}
 
