@@ -1,4 +1,4 @@
-{% extends "theme/brandx/base-subscriber.html" %}
+{% extends 'theme/'|add:theme|add:'/base-subscriber.html' %}
 {% block content %}
     <br/>
     <div class="container">
@@ -29,7 +29,7 @@
                             <select id="id_topic" name="topic" class="form-control">
                                 <option>-----------</option>
                                 {% for topic in topics %}
-                                    <option value="{{ topic.id }}"
+                                    <option value="{{ topic.id }}">
                                     <option value="{{ topic.topic_arn }}" data-display_name="{{ topic.display_name }}"
                                             {% if topic.selected == 'True' %}Selected{% endif %}>
                                         <span id="display_name" class="hidden">{{ topic.display_name }}</span> :

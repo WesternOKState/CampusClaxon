@@ -1,4 +1,4 @@
-{% extends "theme/brandx/base-admin.html" %}
+{% extends 'theme/'|add:theme|add:'/base-admin.html' %}
 {% block content %}
     <br/>
     <div class="container">
@@ -36,10 +36,10 @@
                             {{ form.last_name }}
                         </div>
                         <div class="input-row">
-                            <label for="id_personal_email">
-                                {{ form.personal_email.label }}:
+                            <label for="id_student_id">
+                                {{ form.student_id.label }}:
                             </label>
-                            {{ form.personal_email }}
+                            {{ form.student_id }}
                         </div>
                         {% if authentication_type == "internal" %}
                             <div class="input-row">
@@ -55,10 +55,10 @@
                     </div><!--/col-->
                     <div class="col-sm-6">
                         <div class="input-row">
-                            <label for="id_student_id">
-                                {{ form.student_id.label }}:
+                            <label for="id_personal_email">
+                                {{ form.personal_email.label }}:
                             </label>
-                            {{ form.student_id }}
+                            {{ form.personal_email }}
                         </div>
                         <div class="input-row">
                             <label for="id_school_email">

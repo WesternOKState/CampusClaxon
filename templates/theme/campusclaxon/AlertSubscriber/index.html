@@ -1,4 +1,4 @@
-{% extends "theme/brandx/base-subscriber.html" %}
+{% extends 'theme/'|add:theme|add:'/base-subscriber.html' %}
 {% block content %}
     <br/>
     <div class="container">
@@ -14,8 +14,8 @@
 
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    <h1 class="panel-title" style="font-size:20px"><strong>Welcome, <span style="color:#4a4a4a">{{ user.first_name }}</span>, to the
-                        {%  include "theme/brandx/BRANDING-name.html" %} Alert System!</strong></h1>
+                    <h1 class="panel-title" style="font-size:20px"><strong>Welcome {{ user.first_name }}, to Western's
+                        Pioneer Alert System!</strong></h1>
                 </div>
                 <div class="panel-body">
                     {#      <h4><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Manage P.A.S. <span style="font-size:11px; color: #797">(Pioneer Alert System)</span></h4>#}
@@ -49,10 +49,8 @@
         <div class="col-sm-3 2col-sm-offset-1 blog-sidebar">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h1 class="panel-title">
-{#                        <span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>#}
-                        {%  include "theme/brandx/BRANDING-name.html" %} Alert Help!
-                    </h1>
+                    <h1 class="panel-title"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>
+                        Pioneer Alert Help!
                 </div>
                 <div class="panel-body">
                     {% for group in user.groups.all %}

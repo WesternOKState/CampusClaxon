@@ -4,7 +4,10 @@ from .views import IndexView, SendAlertView, ViewLogs, \
     NewTopicView, EditTopicView, ManageTopicSubscribersView, NewSubscriberView, UploadSubscribersView, \
     EditSubscriberView, SyncSubscribersView, Launch, RemoveTopicView, \
     RemoveSubscriberView, FindUserView, FindUserByNameView, EditCellPhoneView, ManageSubscribersView, \
-    BrowseTopicSubscriberView, RemoveAccountView, ImportCourseView, QuickAlertView
+    BrowseTopicSubscriberView, RemoveAccountView, ImportCourseView, QuickAlertView, AlertHookView, QuickGenericView, \
+    QuickAlertHomeView, QuickSevereWeatherView, QuickSchoolClosingView, QuickPowerOutageView, QuickOnlineDowntimeView, \
+    QuickWelcomeView, InboundView
+
 
 urlpatterns = [
     url(r'^$', IndexView.as_view(), name="adminIndex"),
@@ -44,5 +47,16 @@ urlpatterns = [
     url(r'^subscriber/', include('AlertSubscriber.urls')),
     url(r'^removeAccount/(?P<hash>[a-f0-9]+)/$', RemoveAccountView.as_view(), name="removeAccount"),
     url(r'^importClass/$', ImportCourseView.as_view(), name='import_course'),
+    url(r'^alertHook/$', AlertHookView.as_view(), name="alert_hook"),
     url(r'^quickalert/', QuickAlertView.as_view(), name="quickalert"),
+    url(r'^quickAlertHome/', QuickAlertHomeView.as_view(), name="quickHome"),
+    url(r'^quickSevereWeather/', QuickSevereWeatherView.as_view(), name="quickSevereWeather"),
+    url(r'^quickSchoolClosing/', QuickSchoolClosingView.as_view(), name="quickClosing"),
+    url(r'^quickPowerOutage/', QuickPowerOutageView.as_view(), name="quickOutage"),
+    url(r'^quickGeneric/', QuickGenericView.as_view(), name="quickGeneric"),
+    url(r'^quickOnlineDowntime/', QuickOnlineDowntimeView.as_view(), name="quickDowntime"),
+    url(r'^quickWelcome/', QuickWelcomeView.as_view(), name="quickWelcome"),
+    url(r'^inbound/', InboundView.as_view(), name="inbound"),
+
+
 ]

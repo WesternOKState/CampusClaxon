@@ -1,4 +1,4 @@
-{% extends "theme/brandx/base-subscriber.html" %}
+{% extends 'theme/'|add:theme|add:'/base-subscriber.html' %}
 {% block content %}
     <br/>
     <div class="container">
@@ -32,7 +32,8 @@
                                     Last Name:
                                 </label>
                                 <input class="form-control" id="id_last_name" maxlength="30" name="last_name"
-                                       value="{{ last_name }}" type="text" disabled>                            </div>
+                                       value="{{ last_name }}" type="text" disabled>
+                            </div>
                             {#                    <p><span  id="cell_phone">{{ cell_phone }} &nbsp; <a href="{% url 'edit_cell_phone' cell_phone %}"><i class="glyphicon glyphicon-edit">[edit]</i></a></span></p>#}
                             <div class="input-row">
                                 <label for="id_personal_email">
@@ -40,17 +41,6 @@
                                 </label>
                                 {{ form.personal_email }}
                             </div>
-                            {% if authentication_type == "internal" %}
-                                <div class="input-row">
-                                    <label for="id_password" class="labeled">
-                                        Password:
-                                    </label>
-                                    {{ form.password }}
-                                    <div style="color:#5800ff; font-size:11px; font-style: italic; padding:2px 0">
-                                        For no password changes, leave this field blank.
-                                    </div>
-                                </div>
-                            {% endif %}
                         </div><!--/col-->
                         <div class="col-sm-6">
                             <div class="input-row">
@@ -71,7 +61,7 @@
                                 <div for="id_student_cell" style="display:block" class="labeled">
                                     Cell Phone:
                                 </div>
-                                <div class="fake-input cell cellblur" title="Please use the Edit Cell Phone link to the right">
+                                <div class="fake-input cell" title="Please use the Edit Cell Phone link to the right">
                                     {{ cell_phone }}
                                 </div>
                             {#                        <input class="form-control" id="id_student_cell" maxlength="30" name="student_cell" value="{{ cell_phone }}" type="text"  style="display:inline-block" disabled hidden> &nbsp;#}
@@ -266,9 +256,6 @@
                $('#myModalwarning').modal('show');
             };
           });
-
-        $('#id_student_id').addClass('blurry-text');
-        $('.fake-input').addClass('blurry-text');
 
     </script>
 

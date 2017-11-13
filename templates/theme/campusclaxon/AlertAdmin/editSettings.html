@@ -1,5 +1,6 @@
-{% extends "theme/brandx/base-admin.html" %}
+{% extends 'theme/'|add:theme|add:'/base-admin.html' %}
 {% load staticfiles %}
+
 {% block content %}
 <br />
 <div class="container">
@@ -8,79 +9,67 @@
       <li class="active">Edit Settings</li>
     </ol>
 
-    <div class="row">
-        <div class="col-sm-9 blog-main">
-            <div class="panel panel-primary blog-main">
-              <div class="panel-heading">
-                <h1 class="panel-title"><strong>{%  include "theme/brandx/BRANDING-name.html" %} Alert Advanced Settings</strong></h1>
-              </div>
-              <div class="panel-body">
-                <form action="." method="post">
-                    {%   csrf_token %}
-                    <p>
-                        {{ form.aws_security_key.label }}:
-                        {{ form.aws_security_key}}
-                    </p>
-                    <p>
-                        {{ form.aws_secret_key.label }}:
-                        {{ form.aws_secret_key }}
-                    </p>
-                    <p>
-                        {{ form.authentication_type.label }}:
-                        {{ form.authentication_type }}
-                    </p>
-                    <p>
-                        {{ form.theme_name.label }}:
-                        <select name="theme_name" id="id_theme_name" class="form-control">
-                            {% for theme in themes %}
-                                <option value="{{ theme.name }}" {% if theme.selected == 'True' %}selected{% endif %}>{{ theme.name|upper }} {% if theme.selected == 'True' %}(Current){% endif %}</option>
-                            {% endfor %}
-                        </select>
-                    </p>
-                    <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save Settings
-                    </button>
-                </form>
-              </div>
-            </div>
-        </div>
-        <div class="col-sm-3 2col-sm-offset-1 blog-sidebar">
-            <div class="panel panel-danger">
-                <div class="panel-heading">
-                    <h1 class="panel-title">
-                        {%  include "theme/brandx/BRANDING-name.html" %} Alert Help!
-                    </h1>
-                </div>
-                <div class="panel-body">
+<div class="panel panel-primary blog-main">
+  <div class="panel-heading">
+    <h1 class="panel-title"><strong>{%  include 'theme/'|add:theme|add:'/BRANDING-name.html' %} Advanced Settings</strong></h1>
+  </div>
+  <div class="panel-body">
+    <form action="." method="post">
+        {%   csrf_token %}
+        <p>
+            {{ form.sms_provider.label }}:
+            {{ form.sms_provider }}
+        </p>
+        <p>
+            {{ form.security_key.label }}:
+            {{ form.security_key}}
+        </p>
+        <p>
+            {{ form.secret_key.label }}:
+            {{ form.secret_key }}
+        </p>
+    <hr />
+        <p>
+            {{ form.authentication_type.label }}:
+            {{ form.authentication_type }}
+        </p>
+        <p>
+            {{ form.quick_alert_auth_code.label }}: <span style="font-style:italic; color:#777">(For the <a href="{% url 'quickalert' %}">QuickAlert Page</a>)</span>
+            {{ form.quick_alert_auth_code }}
+        </p>
+        <p>
+            {{ form.globaltopic.label }}: <span style="font-style:italic; color:#777">(List of Groups displayed as Required)</span>
+            {{ form.globaltopic }}
+        </p>
+        <p>
+            {{ form.theme_name.label }}:
+            <select name="theme_name" id="id_theme_name" class="form-control">
+                {% for theme in themes %}
+                    <option value="{{ theme.name }}" {% if theme.selected == 'True' %}selected{% endif %}>{{ theme.name|upper }} {% if theme.selected == 'True' %}(Current){% endif %}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p style="margin:25px 0 0 0">
+            <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save Settings
+            </button>
+        </p>
+    </form>
+  </div>
+</div>
+</div>
 
-                    <div class="sidebar-module">
-                        <h2>
-                            Aws security key
-                        </h2>
-                        <p></p>
-                    </div><!--/sidebar-module-->
-                    <div class="sidebar-module">
-                        <h2>
-                            Aws secret key
-                        </h2>
-                        <p></p>
-                    </div><!--/sidebar-module-->
-                    <div class="sidebar-module">
-                        <h2>
-                            Authentication type
-                        </h2>
-                        <p></p>
-                    </div><!--/sidebar-module-->
-                    <div class="sidebar-module">
-                        <h2>
-                            Theme name
-                        </h2>
-                        <p></p>
-                    </div><!--/sidebar-module-->
+{%  include 'registration/version.html' %}
 
-                </div><!--/panel-body-->
-            </div><!--/panel-->        </div><!--/blog-sidebar-->
-    </div><!--/row-->
-
+    <style>
+        #id_quick_alert_auth_code {
+            text-shadow: 0 0 9px #000;
+            color: transparent;
+        }
+        #id_quick_alert_auth_code:focus {
+            text-shadow: none;
+            color: #000;
+        }
+    </style>
 {% endblock %}
 

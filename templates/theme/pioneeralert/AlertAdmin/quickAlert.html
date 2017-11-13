@@ -1,21 +1,12 @@
-{% extends "theme/pioneeralert/base-admin.html" %}
+{% extends 'theme/'|add:theme|add:'/base-admin.html' %}
 {% block content %}
-    <br/>
-    <div class="container">
-    <ol class="breadcrumb">
-        <li><a href="{% url 'adminIndex' %}">Home</a></li>
-        <li class="active">QUICK ALERT</li>
-    </ol>
 
-    <div class="row" style="width: 40%; margin: -10px auto 10px;">
-    </div><!--/row-->
-
-    <div class="row">
+    <div class="container" style="margin-top: 90px;">
         <div class="blog-main">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h1 class="panel-title">
-                        <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> &nbsp; Enter Message To Send:
+                        <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> &nbsp; Send a Quick Alert Message:
                     </h1>
                 </div>
                 <div class="panel-body">
@@ -42,7 +33,7 @@
                         <div class="input-separator">
                             <label for="id_message">
                                 <span class="glyphicon glyphicon-bullhorn"
-                                  aria-hidden="true"></span> &nbsp;{{ form.message.label }}:
+                                  aria-hidden="true"></span> &nbsp;{{ form.message.label }}: {{ display_name }}
                             </label>
 {#                            {{ form.message }}#}
                             <textarea class="form-control"  id="id_message" maxlength="140" name="message" rows="5" required="">
@@ -74,8 +65,6 @@
                 </div>
             </div>
         </div>
-
-    </div><!--/row-->
 
 
 
@@ -267,13 +256,18 @@
                 font-size:4vw
             }
         }
-        @media (max-width: 402px){
+        @media (max-width: 480px){
             #submitbtn {
                 width: 100%;
                 margin-right: 0;
+                border-radius: 0 0 8px 8px;
+                padding: 14px 0;
+                font-size: 18px;
             }
             #id_auth_code {
                 width: 100%;
+                border-radius: 8px 8px 0 0;
+                padding: 22px 0;
             }
         }
     </style>

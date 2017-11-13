@@ -1,4 +1,4 @@
-{% extends "theme/brandx/base-admin.html" %}
+{% extends 'theme/'|add:theme|add:'/base-admin.html' %}
 {% load staticfiles %}
 {% block content %}
 <br />
@@ -10,18 +10,27 @@
 
 <div class="panel panel-primary blog-main">
   <div class="panel-heading">
-    <h1 class="panel-title"><strong>{%  include "theme/brandx/BRANDING-name.html" %} Advanced Settings</strong></h1>
+    <h1 class="panel-title"><strong>{%  include 'theme/'|add:theme|add:'/BRANDING-name.html' %} Advanced Settings</strong></h1>
   </div>
   <div class="panel-body">
     <form action="." method="post">
         {%   csrf_token %}
         <p>
-            {{ form.aws_security_key.label }}:
-            {{ form.aws_security_key}}
+            {{ form.sms_provider.label }}:
+            {{ form.sms_provider }}
         </p>
         <p>
-            {{ form.aws_secret_key.label }}:
-            {{ form.aws_secret_key }}
+            {{ form.security_key.label }}:
+            {{ form.security_key}}
+        </p>
+        <p>
+            {{ form.secret_key.label }}:
+            {{ form.secret_key }}
+        </p>
+    <hr />
+        <p>
+            {{ form.authentication_type.label }}:
+            {{ form.authentication_type }}
         </p>
         <p>
             {{ form.quick_alert_auth_code.label }}: <span style="font-style:italic; color:#777">(For the <a href="{% url 'quickalert' %}">QuickAlert Page</a>)</span>
@@ -32,10 +41,6 @@
             {{ form.globaltopic }}
         </p>
         <p>
-            {{ form.authentication_type.label }}:
-            {{ form.authentication_type }}
-        </p>
-        <p>
             {{ form.theme_name.label }}:
             <select name="theme_name" id="id_theme_name" class="form-control">
                 {% for theme in themes %}
@@ -43,16 +48,18 @@
                 {% endfor %}
             </select>
         </p>
-        <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
-            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save Settings
-        </button>
+        <p style="margin:25px 0 0 0">
+            <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save Settings
+            </button>
+        </p>
     </form>
   </div>
 </div>
 </div>
 
 {%  include 'registration/version.html' %}
-    
+
     <style>
         #id_quick_alert_auth_code {
             text-shadow: 0 0 9px #000;

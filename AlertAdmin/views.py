@@ -1,6 +1,7 @@
 import datetime
 import re
 import os
+import requests
 import simplejson as json
 from braces.views import GroupRequiredMixin, LoginRequiredMixin
 from django.contrib.auth import login
@@ -13,18 +14,12 @@ from django.views.generic import ListView, TemplateView, RedirectView
 from django.views.generic import View
 from CampusClaxon import settings
 from LTI.lti import LtiLaunch
-from CampusClaxon.AmazonMessage import AmazonMessage
-from CampusClaxon.lib import get_hash, processFile, change_cell_number, AlertTemplateView, AlertFormView, AlertListView
+from CampusClaxon.SMSManager import SMSManager
+from CampusClaxon.lib import get_hash, processFile, change_cell_number, AlertTemplateView, AlertFormView, AlertListView, add_new_subscriber
 from .forms import MyMessageForm, SettingsForm, TemplateForm, SubscriberForm, FileUploadForm, \
-    AddSubscriberForm, NewTopicForm, QuickAlertForm
-from .models import MessageLog, Topic, Setting, Template, Subscriber, TopicSubscription
-from django.forms import ValidationError
-
-# Create your views here.
-
-
-# def get_template(template_name):
-#     return  "theme/" + Setting.objects.all()[0].theme_name + "/" + template_name
+    AddSubscriberForm, NewTopicForm, QuickAlertForm, QuickSevereWeatherForm, QuickSchoolClosingForm, \
+    QuickOutageForm, QuickOnlineDowntimeForm
+from .models import MessageLog, Topic, Setting, Template, Subscriber, TopicSubscription, ResultsLog
 
 
 class IndexView(GroupRequiredMixin,AlertTemplateView):
@@ -92,15 +87,8 @@ class SendAlertView(GroupRequiredMixin, AlertFormView):
         return context
 
     def form_valid(self, form):
-        my_settings = Setting.objects.all()[0]
-        message_log = MessageLog()
-        message_log.initiator = self.request.user
-        message_log.topic_name = self.request.POST['topic']
-        message_log.message = self.request.POST['message']
-        message_log.timestamp = datetime.datetime.now()
-        message_log.save()
-        message_sender = AmazonMessage(my_settings.aws_security_key, my_settings.aws_secret_key,)
-        message_sender.send_message(self.request.POST['message'], self.request.POST['topic'])
+        message_sender = SMSManager()
+        message_sender.send_message(self.request.POST['message'], Topic.objects.get(topic_arn=self.request.POST['topic']))
         self.success_url = reverse('index2')
         return super(SendAlertView, self).form_valid(form)
 
@@ -124,8 +112,9 @@ class EditSettingsView(GroupRequiredMixin, AlertFormView):
 
     def get_context_data(self, **kwargs):
         context = super(EditSettingsView, self).get_context_data()
+        my_settings = Setting.objects.all()[0]
         if Setting.objects.all().count() > 0:
-            theme = Setting.objects.all()[0].theme_name
+            theme = my_settings.theme_name
         else:
             theme = ''
         themes = []
@@ -139,27 +128,16 @@ class EditSettingsView(GroupRequiredMixin, AlertFormView):
             t['name'] = r
             themes.append(t)
         context['themes'] = themes
+        context['sms_provider'] = my_settings.sms_provider
         return context
 
     def get_initial(self):
-        if Setting.objects.all().count() > 0:
-            mySettings = Setting.objects.all()[0]
-            print(mySettings.quick_alert_auth_code)
-            return {'aws_security_key': mySettings.aws_security_key,
-                    'aws_secret_key': mySettings.aws_secret_key,
-                    'theme_name': mySettings.theme_name,
-                    'quick_alert_auth_code': mySettings.quick_alert_auth_code,
-                    'globaltopic': mySettings.global_topic }
+        s = SMSManager()
+        return s.get_initial_settings()
 
     def form_valid(self, form):
-        mySettings = Setting(pk=1)
-        mySettings.aws_security_key = self.request.POST['aws_security_key']
-        mySettings.aws_secret_key = self.request.POST['aws_secret_key']
-        mySettings.theme_name = self.request.POST['theme_name']
-        mySettings.authentication_type = self.request.POST['authentication_type']
-        mySettings.quick_alert_auth_code = self.request.POST['quick_alert_auth_code']
-        mySettings.global_topic = Topic.objects.get(id=self.request.POST['globaltopic'])
-        mySettings.save()
+        s = SMSManager()
+        s.set_settings(self.request.POST)
         return super(EditSettingsView, self).form_valid(form)
 
 
@@ -215,8 +193,7 @@ class NewTemplateView(GroupRequiredMixin, AlertFormView):
 
     def get_context_data(self, **kwargs):
         context = super(NewTemplateView, self).get_context_data(**kwargs)
-        mysettings = Setting.objects.get(pk=1)
-        amz = AmazonMessage(mysettings.aws_security_key, mysettings.aws_secret_key)
+        # sms = SMSManager()
         context['topics'] = Topic.objects.all()
         return context
 
@@ -274,7 +251,8 @@ class BrowseTopicSubscriberView(GroupRequiredMixin, AlertTemplateView):
                        'SubscriptionArn': sub.topic, 'hash': sub.subscriber.hash}
             subscribers.append(person)
         context['subscribers'] = subscribers
-        tn = self.kwargs['topic'].split(':')[5]
+        if str(self.kwargs['topic']).count(':') > 0: tn = self.kwargs['topic'].split(':')[5]
+        else: tn = self.kwargs['topic']
         context['topic'] = {'arn': self.kwargs['topic'], 'name': tn }
         return context
 
@@ -283,9 +261,8 @@ class RemoveSubscriberView(GroupRequiredMixin, RedirectView):
         group_required = "admin"
 
         def post(self, *args, **kwargs):
-            mysettings = Setting.objects.get(pk=1)
-            amz = AmazonMessage(mysettings.aws_security_key, mysettings.aws_secret_key)
-            res = amz.unsubscribe(self.request.POST['SubscriptionArn'])
+            sms = SMSManager()
+            res = sms.unsubscribe(self.request.POST['SubscriptionArn'])
             if res == 0:
                 sub = TopicSubscription.objects.get(subscription_arn=self.request.POST['SubscriptionArn'])
                 sub.delete()
@@ -302,12 +279,11 @@ class RemoveAccountView(GroupRequiredMixin, RedirectView):
 
     def post(self, *args, **kwargs):
 
-        mysettings = Setting.objects.get(pk=1)
-        amz = AmazonMessage(mysettings.aws_security_key, mysettings.aws_secret_key)
+        sms = SMSManager()
         subscriber = Subscriber.objects.get(hash=self.request.POST['hash'])
         subscriptions = TopicSubscription.objects.filter(subscriber=subscriber)
         for sub in subscriptions:
-            res = amz.unsubscribe(sub.subscription_arn)
+            res = sms.unsubscribe(sub.subscription_arn)
             if res != 0:
                 # TODO Error Message
                 return redirect('manageSubscribers')
@@ -324,11 +300,10 @@ class NewTopicView(GroupRequiredMixin, AlertFormView):
     success_url = "/manageGroups"
 
     def form_valid(self, form):
-        mysettings = Setting.objects.get(pk=1)
-        amz = AmazonMessage(mysettings.aws_security_key, mysettings.aws_secret_key)
-        res = amz.create_topic(self.request.POST['topic_name'])
+        sms = SMSManager()
+        res = sms.create_topic(self.request.POST['topic_name'])
         if res != 0:
-            amz.set_topic_attributes(res, self.request.POST['display_name'])
+            sms.set_topic_attributes(res, self.request.POST['display_name'])
             myTopic = Topic()
             myTopic.topic_name = self.request.POST['topic_name']
             myTopic.topic_arn = res
@@ -338,8 +313,7 @@ class NewTopicView(GroupRequiredMixin, AlertFormView):
             myTopic.display_name = self.request.POST['display_name']
             myTopic.save()
 
-            mysettings = Setting.objects.get(pk=1)
-            amz = AmazonMessage(mysettings.aws_security_key, mysettings.aws_secret_key)
+            sms = SMSManager()
 
             if myTopic.topic_type == 'public':
                 subscribers = Subscriber.objects.all()
@@ -357,7 +331,7 @@ class NewTopicView(GroupRequiredMixin, AlertFormView):
             if myTopic.topic_type == 'required':
                 subscribers = Subscriber.objects.all()
                 for sub in subscribers:
-                    res = amz.subscribe(sub.cell_phone, myTopic.topic_arn)
+                    res = sms.subscribe(sub.cell_phone, myTopic.topic_arn)
                     if res != 0:
                         print("Subscribed " + sub.last_name)
                         if TopicSubscription.objects.filter(subscriber=sub, topic=myTopic).exists():
@@ -379,9 +353,8 @@ class RemoveTopicView(GroupRequiredMixin, RedirectView):
     # template_name = get_template('success.html')
 
     def get(self, *args, **kwargs):
-        mysettings = Setting.objects.get(pk=1)
-        amz = AmazonMessage(mysettings.aws_security_key, mysettings.aws_secret_key)
-        res = amz.delete_topic(self.kwargs['topic'])
+        sms = SMSManager()
+        res = sms.delete_topic(self.kwargs['topic'])
         if res == 0:
             topic = Topic.objects.get(topic_arn=self.kwargs['topic'])
             topic.delete()
@@ -412,9 +385,8 @@ class EditTopicView(GroupRequiredMixin, AlertFormView):
         return context
 
     def form_valid(self, form):
-        mysettings = Setting.objects.get(pk=1)
-        amz = AmazonMessage(mysettings.aws_security_key, mysettings.aws_secret_key)
-        res = amz.set_topic_attributes(self.request.POST['topic_arn'], self.request.POST['display_name'])
+        sms = SMSManager()
+        res = sms.set_topic_attributes(self.request.POST['topic_arn'], self.request.POST['display_name'])
         if res == 0:
             myTopic = Topic.objects.get(pk=self.kwargs['pk'])
             myTopic.topic_owner = User.objects.get(pk=self.request.POST['topic_owner'])
@@ -541,22 +513,24 @@ class NewSubscriberView(GroupRequiredMixin, AlertFormView):
         if Subscriber.objects.filter(cell_phone=number).exists():
             # If user Currently Exists, and does not have an active subscription to the current topic
             mySubscriber = Subscriber.objects.get(cell_phone=number)
-            if not TopicSubscription.objects.filter(topic=Topic.objects.get(topic_arn=self.kwargs['topic']),
-                                                    subscriber=mySubscriber, status='active').exists():
-                if 'topic' in self.kwargs:
+            if 'topic' in self.kwargs:
+                if not TopicSubscription.objects.filter(topic=Topic.objects.get(topic_arn=self.kwargs['topic']),
+                                                        subscriber=mySubscriber, status='active').exists():
                     self.subscribe_to_current(mySubscriber)
-                self.success_url = "/success/browseTopicSubscribers/" + self.request.POST['topic'] + '/'
-                return super(NewSubscriberView, self).form_valid(form)
+                    self.success_url = "/success/browseTopicSubscribers/" + self.request.POST['topic'] + '/'
+                    return super(NewSubscriberView, self).form_valid(form)
         else:
-            # User dies not exist, so add them to required, add inactive to public(s) and add them to the current.
-            mySubscriber = Subscriber()
-            mySubscriber.first_name = self.request.POST['first_name']
-            mySubscriber.last_name = self.request.POST['last_name']
-            mySubscriber.cell_phone = number
-            mySubscriber.student_id = self.request.POST['student_id']
-            mySubscriber.personal_email = self.request.POST['personal_email']
-            mySubscriber.school_email = self.request.POST['school_email']
-            mySubscriber.save()
+            # User does not exist, so add them to required, add inactive to public(s) and add them to the current.
+            mySubscriber = add_new_subscriber(self.request.POST['first_name'], self.request.POST['last_name'],
+                               self.request.POST['student_id'], self.request.POST['school_email'])
+
+            # mySubscriber.first_name = self.request.POST['first_name']
+            # mySubscriber.last_name = self.request.POST['last_name']
+            # mySubscriber.cell_phone = number
+            # mySubscriber.student_id = self.request.POST['student_id']
+            # mySubscriber.personal_email = self.request.POST['personal_email']
+            # mySubscriber.school_email = self.request.POST['school_email']
+            # mySubscriber.save()
 
             if Setting.objects.all()[0].authentication_type == 'internal':
                 user = User.objects.create_user(self.request.POST['school_email'],
@@ -568,9 +542,9 @@ class NewSubscriberView(GroupRequiredMixin, AlertFormView):
                 user.groups.add(Group.objects.get(name='subscriber'))
                 user.save()
             if 'topic' in self.kwargs:
-                self.subscribe_to_public(mySubscriber)
+                subscribe_to_public(mySubscriber)
 
-            res = self.subscribe_to_required(mySubscriber)
+            res = subscribe_to_required(mySubscriber)
             if res != 0:
                 if 'topic' in self.kwargs:
                     if self.subscribe_to_current(mySubscriber) != 0:
@@ -581,7 +555,10 @@ class NewSubscriberView(GroupRequiredMixin, AlertFormView):
                     return super(NewSubscriberView, self).form_valid(form)
         # If we got this far, something went wrong.
         # TODO: Error page
-        self.success_url = "/success/browseTopicSubscribers/" + self.request.POST['topic'] + '/'
+        if 'topic' in self.kwargs:
+            self.success_url = "/success/browseTopicSubscribers/" + self.request.POST['topic'] + '/'
+        else:
+            self.success_url = "/success/manageSubscribers"
         return super(NewSubscriberView, self).form_valid(form)
 
     def subscribe_to_current(self, subscriber):
@@ -594,9 +571,8 @@ class NewSubscriberView(GroupRequiredMixin, AlertFormView):
         # if it is not an active subscription, activate it.
 
         if subscription.status != 'active':
-            mysettings = Setting.objects.get(pk=1)
-            amz = AmazonMessage(mysettings.aws_security_key, mysettings.aws_secret_key)
-            res = amz.subscribe(subscriber.cell_phone, topic.topic_arn)
+            sms = SMSManager()
+            res = sms.subscribe(subscriber.cell_phone, topic.topic_arn)
             if res != 0:
                 subscription.subscriber = subscriber
                 subscription.topic = topic
@@ -607,36 +583,36 @@ class NewSubscriberView(GroupRequiredMixin, AlertFormView):
         else:
             return subscription.subscription_arn
 
-    def subscribe_to_required(self, subscriber):
-        topics = Topic.objects.filter(topic_type="required")
-        for topic in topics:
-            if not TopicSubscription.objects.filter(topic=topic, subscriber=subscriber).exists():
-                mysettings = Setting.objects.get(pk=1)
-                amz = AmazonMessage(mysettings.aws_security_key, mysettings.aws_secret_key)
-                res = amz.subscribe(subscriber.cell_phone, topic.topic_arn)
-                print("Required: " + res)
-                if res != 0:
-                    subscription = TopicSubscription()
-                    subscription.subscriber = subscriber
-                    subscription.topic = topic
-                    subscription.status = 'active'
-                    subscription.subscription_arn = res
-                    subscription.save()
-                    return res
-                else:
-                    return 0
+    # def subscribe_to_required(self, subscriber):
+    #     topics = Topic.objects.filter(topic_type="required")
+    #     for topic in topics:
+    #         if not TopicSubscription.objects.filter(topic=topic, subscriber=subscriber).exists():
+    #             mysettings = Setting.objects.get(pk=1)
+    #             sms = SMSManager(mysettings.aws_security_key, mysettings.aws_secret_key)
+    #             res = sms.subscribe(subscriber.cell_phone, topic.topic_arn)
+    #             print("Required: " + res)
+    #             if res != 0:
+    #                 subscription = TopicSubscription()
+    #                 subscription.subscriber = subscriber
+    #                 subscription.topic = topic
+    #                 subscription.status = 'active'
+    #                 subscription.subscription_arn = res
+    #                 subscription.save()
+    #                 return res
+    #             else:
+    #                 return 0
 
-    def subscribe_to_public(self, subscriber):
-        topics = Topic.objects.filter(topic_type="public")
-        for topic in topics:
-            if not TopicSubscription.objects.filter(topic=topic, subscriber=subscriber).exists():
-                subscription = TopicSubscription()
-                subscription.subscriber = subscriber
-                subscription.topic = topic
-                subscription.status = 'disabled'
-                subscription.subscription_arn = 'NA'
-                subscription.save()
-        return 0
+    # def subscribe_to_public(self, subscriber):
+    #     topics = Topic.objects.filter(topic_type="public")
+    #     for topic in topics:
+    #         if not TopicSubscription.objects.filter(topic=topic, subscriber=subscriber).exists():
+    #             subscription = TopicSubscription()
+    #             subscription.subscriber = subscriber
+    #             subscription.topic = topic
+    #             subscription.status = 'disabled'
+    #             subscription.subscription_arn = 'NA'
+    #             subscription.save()
+    #     return 0
 
     def form_invalid(self, form):
         print(form.errors)
@@ -653,25 +629,12 @@ class SyncSubscribersView(GroupRequiredMixin, RedirectView):
         mysettings = Setting.objects.get(pk=1)
         topic = Topic.objects.get(topic_name="IT Fulltime")
         #getTopicSubscribers(topic.id)
-        amazon = AmazonMessage(mysettings.aws_security_key, mysettings.aws_secret_key)
-        topic = amazon.create_topic('New_Topic')
-        amazon.subscribe('15803011758', topic)
+        sms = SMSManager()
+        topic = sms.create_topic('New_Topic')
+        sms.subscribe('15803011758', topic)
 
 
-        # for subscriber in subscribers:
-        #     amazon.get_subscriber_arn(mysettings.aws_security_key,
-        #                      mysettings.aws_secret_key,
-        #                      subscriber.cell_phone,
-        #                      topic.topic_arn)
 
-            # subscriber.account_processed = True
-            # subscriber.save()
-
-        # sync subscriptions tables
-        # topics = Topic.objects.all()
-        # for topic in topics:
-        #     # This will be a list of cell phone numbers
-        #     subscribers = getTopicSubscribers(topic.pk)
 
         return reverse("Manage Subscribers")
 
@@ -746,27 +709,17 @@ class ManageSubscribersView(GroupRequiredMixin, AlertTemplateView):
 class ImportCourseView(LoginRequiredMixin, AlertTemplateView):
     template_name = "AlertAdmin/loading.html"
 
-    # def get(self):
-    #     setting = Setting.objects.all()[0]
-    #     amz = AmazonMessage(setting.aws_security_key, setting.aws_secret_key)
-    #     res = amz.create_topic(self.request.GET['section'])
-    #     if res != 0:
-    #         Topic.objects.create(topic_name=self.request.GET['section'], topic_arn=res, topic_type='private',
-    #                              description=self.request.GET['course_title'], topic_owner='admin',
-    #                              display_name=self.request.GET['course'])
-    #         amz.set_topic_attributes(res, self.request.GET['course'])
-    #         students = get_lms_students(self.request.GET['section'])
-    #
-    #         for student in students:
-    #             if Subscriber.objects.get(student_id=student).exists():
-    #                 subscriber = Subscriber.objects.get(student_id=student)
-    #                 topic = Topic.objects.get(topic_name=self.kwargs['section'])
-    #                 if not TopicSubscription.objects.filter(subscriber=subscriber,
-    #                                                     topic=topic).exists():
-    #                     TopicSubscription.objects.create(subscriber=subscriber, topic=topic,
-    #                                                      subscription_arn='na', status='disabled')
-    #     return redirect('subscribe')
 
+
+    def get(self, request):
+        data = {'rest_key': settings.MOODLE_API,
+                'courseid': request.GET['courseid'],
+                'action': 'get_instructor'}
+        r = requests.get(settings.MOODLE_API_LOCATION, params=data)
+        res = r.json()
+        sms = SMSManager()
+        sms.create_topic(request.GET['section'], request.GET['course'], User.objects.get(username=res['username']))
+        return redirect('index')
 
 class QuickAlertView(AlertFormView):
     template_name = "AlertAdmin/quickAlert.html"
@@ -786,26 +739,199 @@ class QuickAlertView(AlertFormView):
         context['templates'] = Template.objects.all()
         return context
 
-
-
     def form_valid(self, form):
         my_settings = Setting.objects.all()[0]
         if self.request.POST['auth_code'] == my_settings.quick_alert_auth_code:
-            message_log = MessageLog()
-            message_log.initiator = self.request.user
-            message_log.topic_name = my_settings.global_topic.topic_name
-            message_log.message = self.request.POST['message']
-            message_log.timestamp = datetime.datetime.now()
-            message_log.save()
-            message_sender = AmazonMessage(my_settings.aws_security_key, my_settings.aws_secret_key)
-            topic = my_settings.global_topic.topic_arn
-            message_sender.send_message(self.request.POST['message'], topic)
+            # message_log = MessageLog()
+            # message_log.initiator = self.request.user
+            # message_log.topic_name = my_settings.global_topic.topic_name
+            # message_log.message = self.request.POST['message']
+            # message_log.timestamp = datetime.datetime.now()
+            # message_log.save()
+            sms = SMSManager()
+            topic = my_settings.global_topic
+            sms.send_bulk_message(self.request.POST['message'], topic)
         else:
             form.add_error('auth_code', "Incorrect Authorization Code")
             return self.form_invalid(form)
         self.success_url = reverse('quickalert')
         return super(QuickAlertView, self).form_valid(form)
 
+
+class QuickGenericView(AlertFormView):
+    template_name = "AlertAdmin/quickGENERIC.html"
+    form_class = QuickAlertForm
+
+    def form_valid(self, form):
+        my_settings = Setting.objects.all()[0]
+        if self.request.POST['auth_code'] == my_settings.quick_alert_auth_code:
+            # message_log = MessageLog()
+            # message_log.initiator = self.request.user
+            # message_log.topic_name = my_settings.global_topic.topic_name
+            # message_log.message = self.request.POST['message']
+            # message_log.timestamp = datetime.datetime.now()
+            # message_log.save()
+            sms = SMSManager()
+            topic = my_settings.global_topic
+            sms.send_bulk_message(self.request.POST['message'], topic, 2)
+        else:
+            form.add_error('auth_code', "Incorrect Authorization Code")
+            return self.form_invalid(form)
+        self.success_url = reverse('quickGeneric')
+        return super(QuickGenericView, self).form_valid(form)
+
+
+class QuickAlertHomeView(AlertTemplateView):
+    template_name = "AlertAdmin/quickHOME.html"
+
+
+class QuickSevereWeatherView(AlertFormView):
+    template_name = "AlertAdmin/quickSEVEREWEATHER.html"
+    form_class = QuickSevereWeatherForm
+
+    def form_valid(self, form):
+        my_settings = Setting.objects.all()[0]
+        if self.request.POST['auth_code'] == my_settings.quick_alert_auth_code:
+            # message_log = MessageLog()
+            # message_log.initiator = self.request.user
+            # message_log.topic_name = my_settings.global_topic.topic_name
+            # message_log.message = self.request.POST['message']
+            # message_log.timestamp = datetime.datetime.now()
+            # message_log.save()
+            sms = SMSManager()
+            topic = my_settings.global_topic
+            sms.send_bulk_message("", topic, 4, close_time=self.request.POST['close_time'])
+        else:
+            form.add_error('auth_code', "Incorrect Authorization Code")
+            return self.form_invalid(form)
+        self.success_url = reverse('quickSevereWeather')
+        return super(QuickSevereWeatherView, self).form_valid(form)
+
+class QuickSchoolClosingView(AlertFormView):
+    template_name = "AlertAdmin/quickSCHOOLCLOSING.html"
+    form_class = QuickSchoolClosingForm
+
+    def form_valid(self, form):
+        my_settings = Setting.objects.all()[0]
+        if self.request.POST['auth_code'] == my_settings.quick_alert_auth_code:
+            # message_log = MessageLog()
+            # message_log.initiator = self.request.user
+            # message_log.topic_name = my_settings.global_topic.topic_name
+            # message_log.message = self.request.POST['message']
+            # message_log.timestamp = datetime.datetime.now()
+            # message_log.save()
+            sms = SMSManager()
+            topic = my_settings.global_topic
+            sms.send_bulk_message("", topic, 6, close_time=self.request.POST['close_time'],
+                                  reason=self.request.POST['reason'])
+        else:
+            form.add_error('auth_code', "Incorrect Authorization Code")
+            return self.form_invalid(form)
+        self.success_url = reverse('quickClosing')
+        return super(QuickSchoolClosingView, self).form_valid(form)
+
+
+class QuickPowerOutageView(AlertFormView):
+    template_name = "AlertAdmin/quickPOWEROUTAGE.html"
+    form_class = QuickOutageForm
+
+    def form_valid(self, form):
+        my_settings = Setting.objects.all()[0]
+        if self.request.POST['auth_code'] == my_settings.quick_alert_auth_code:
+            # message_log = MessageLog()
+            # message_log.initiator = self.request.user
+            # message_log.topic_name = my_settings.global_topic.topic_name
+            # message_log.message = self.request.POST['message']
+            # message_log.timestamp = datetime.datetime.now()
+            # message_log.save()
+            sms = SMSManager()
+            topic = my_settings.global_topic
+            sms.send_bulk_message("", topic, 3)
+        else:
+            form.add_error('auth_code', "Incorrect Authorization Code")
+            return self.form_invalid(form)
+        self.success_url = reverse('quickOutage')
+        return super(QuickPowerOutageView, self).form_valid(form)
+
+
+class QuickOnlineDowntimeView(AlertFormView):
+    template_name = "AlertAdmin/quickONLINEDOWNTIME.html"
+    form_class = QuickOnlineDowntimeForm
+
+    def form_valid(self, form):
+        my_settings = Setting.objects.all()[0]
+        if self.request.POST['auth_code'] == my_settings.quick_alert_auth_code:
+            # message_log = MessageLog()
+            # message_log.initiator = self.request.user
+            # message_log.topic_name = my_settings.global_topic.topic_name
+            # message_log.message = self.request.POST['message']
+            # message_log.timestamp = datetime.datetime.now()
+            # message_log.save()
+            sms = SMSManager()
+            topic = my_settings.global_topic
+            sms.send_bulk_message("", topic, 1, close_time=self.request.POST['close_time'],
+                                  reason=self.request.POST['reason'])
+        else:
+            form.add_error('auth_code', "Incorrect Authorization Code")
+            return self.form_invalid(form)
+        self.success_url = reverse('quickDowntime')
+        return super(QuickOnlineDowntimeView, self).form_valid(form)
+
+class QuickWelcomeView(AlertFormView):
+    template_name = "AlertAdmin/quickWELCOME.html"
+    form_class = QuickOutageForm
+
+    def form_valid(self, form):
+        my_settings = Setting.objects.all()[0]
+        if self.request.POST['auth_code'] == my_settings.quick_alert_auth_code:
+            # message_log = MessageLog()
+            # message_log.initiator = self.request.user
+            # message_log.topic_name = my_settings.global_topic.topic_name
+            # message_log.message = self.request.POST['message']
+            # message_log.timestamp = datetime.datetime.now()
+            # message_log.save()
+            sms = SMSManager()
+            topic = my_settings.global_topic
+            sms.send_bulk_message("", topic, 5)
+        else:
+            form.add_error('auth_code', "Incorrect Authorization Code")
+            return self.form_invalid(form)
+        self.success_url = reverse('quickWelcome')
+        return super(QuickWelcomeView, self).form_valid(form)
+
+
+class AlertHookView(View):
+    def get(self, request):
+        results_log = ResultsLog()
+        results_log.message_count = '1'
+        results_log.messages = ""
+        results_log.status = self.request.GET['status'] #
+        results_log.message_id = self.request.GET['messageId'] #
+        results_log.to = self.request.GET['msisdn'] #
+        if 'client-ref' in self.request.GET:
+            results_log.client_ref = self.request.GET['client-ref']
+        else: results_log.client_ref = ""
+        results_log.remaining_balance = ""
+        if 'price' in self.request.GET:
+            results_log.message_price = self.request.GET['price']
+        else:
+            results_log.message_price = ""
+        results_log.network = self.request.GET['network-code'] #
+        results_log.time_Stamp = self.request.GET['message-timestamp']
+        if 'error-text' in self.request.GET:
+            results_log.error_text = self.request.GET['error-text']
+        results_log.save()
+
+        return HttpResponse(self.request.GET)
+
+class InboundView(View):
+    def get(self, request):
+        if 'text' in self.request.GET and self.request.GET['text'] == 'STOP':
+            if 'msisdn' in self.request.GET:
+                subscriber = Subscriber.objects.get(cell_phone=self.request.GET['msisdn'])
+                subscriber.opt_out = True
+                subscriber.save()
+        return HttpResponse(self.request.GET)
 
 def removeTopic(request, topic_id):
     Topic.objects.get(pk=topic_id).delete()
@@ -817,34 +943,46 @@ def removeTemplate(request, template_id):
     return redirect("/success/manageTemplates")
 
 
+
+
 # LTI Views
 
 class Launch(LtiLaunch):
 
     def post(self, request, *args, **kwargs):
         # Returns tp if valid LTI user
+        self.request.session.flush()
         tp = self.is_lti_valid(request)
         if tp is not None:
             # Get the user or add them if tehy do not currently exist
             user = self.get_or_add_user(tp)
             params = tp.to_params()
-
+            if not Subscriber.objects.filter(school_email=user.email).exists():
+                add_new_subscriber(params['lis_person_name_given'], params['lis_person_name_family'],
+                                   params['lis_person_sourcedid'],params['lis_person_contact_email_primary'])
             # get the course number from the course title if this is a Moodle integration
 
             m = re.search("\[[(a-zA-Z0-9)]+\]", params['context_title'])
             course_num = None
             if m:
                 course_num = m.group(0)[1:len(m.group(0)) - 1]
-
+            print('DEBUG: session set to {}'.format(get_hash(params['lis_person_sourcedid'])))
             self.request.session['source_id'] = get_hash(params['lis_person_sourcedid'])
+            print('DEBUG: session confirmed set to  {}'.format(self.request.session['source_id']))
             if self.is_instructor(tp):
                 login(request, user)
-
+                if 'instructor' not in user.groups.all():
+                    user.groups.add(Group.objects.get(name="instructor"))
                 # if we got here from a course and a topic for the course has not been setup, set it up
                 if not Topic.objects.filter(topic_name=params['context_label']).exists() and course_num is not None:
                     # Install the topic
-                    return redirect(reverse('import_course') + "?section={}&course={}".format(params['context_label'],
-                                                                                             course_num))
+                    return redirect(reverse('import_course') + "?section={}&course={}&courseid={}".format(params['context_label'],
+                                                                                             course_num, params['context_id']))
+                if course_num is not None:
+                    sms = SMSManager()
+                    topic = Topic.objects.get(topic_arn=params['context_label'])
+                    sms.add_to_topic_list(self.request.session['source_id'], topic)
+                    return redirect('manageUserGroups')
 
                 if user.groups.filter(name='admin').exists():
                     # If the user is in the admin group, send them to the admin page.
@@ -857,10 +995,16 @@ class Launch(LtiLaunch):
                 # if we got here from a course and the topic has not been setup, set it up.
                 if not Topic.objects.filter(topic_name=params['context_label']).exists()  and course_num is not None:
                     return redirect(
-                        reverse('import_course') + "?section={}&course={}".format(params['context_label'], course_num))
+                        reverse('import_course') + "?section={}&course={}&courseid={}".format(params['context_label'], course_num, params['context_id']))
+                if course_num is not None:
+                    sms = SMSManager()
+                    topic = Topic.objects.get(topic_arn=params['context_label'])
+                    sms.add_to_topic_list(self.request.session['source_id'], topic)
+                    return redirect('manageUserGroups')
                 return redirect("index")
             else:
                 return HttpResponse("You must be an instructor or student.")
         else:
             return HttpResponse("INVALID")
+
 

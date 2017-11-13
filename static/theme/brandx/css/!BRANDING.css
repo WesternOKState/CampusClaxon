@@ -2,15 +2,32 @@
 body {
     background: #fff url(/static/theme/brandx/images/APPS-main-pattern-lighter.png);
 }
+
+
 /* #### Header COLOR, BORDER COLOR, & GRADIENT TEXTURE #### */
 .navbar-inverse {
     background: #5d5d5d url(/static/theme/brandx/images/APPS-header.png) 0 bottom repeat-x;
     border-bottom: 5px solid #000;
 }
-/* #### Optional transparent seal for inner panel body #### */
-.panel-danger .panel-body {
-    background: #fffbfb url(/static/theme/brandx/images/BrandX-seal-transparent2.png) center top no-repeat;
+
+
+/* #### Color & background-color for inner panel title/heading #### */
+.panel-primary > .panel-heading {
+    color: #fff;
+    background: #404040;
+    border-bottom: 5px solid #E4E4E4;
+}
+.blog-sidebar > .panel-danger > .panel-heading {
+    color: #ec9593;
+    background-color: #404040;
+    border-color: #404040;
+}
+
+
+/* #### Transparent seal for inner panel body #### */
+.blog-main .panel-body {
+    background: #fdfdfd url(/static/theme/brandx/images/BrandX-seal-transparent2.png) center top no-repeat !important;
 }
 .panel-success .panel-body {
-    background: #fdfffb url(/static/theme/pioneeralert/images/BrandX-seal-transparent2.png) center top no-repeat;
+    background: #fdfffb url(/static/theme/brandx/images/BrandX-seal-transparent2.png) center top no-repeat !important;;
 }

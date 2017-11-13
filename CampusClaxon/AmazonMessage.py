@@ -43,8 +43,8 @@ class AmazonMessage():
         amzdate = t.strftime('%Y%m%dT%H%M%SZ')
         datestamp = t.strftime('%Y%m%d')
         canonical_uri = '/'
-        canonical_headers = 'host:' + self.host + '\n' + 'x-amz-date:' + amzdate + '\n'
-        signed_headers = 'host;x-amz-date'
+        canonical_headers = 'host:' + self.host + '\n' + 'x-sms-date:' + amzdate + '\n'
+        signed_headers = 'host;x-sms-date'
         payload_hash = hashlib.sha256(''.encode('utf-8')).hexdigest()
         canonical_request = self.method + '\n' + canonical_uri + '\n' + canonical_querystring + '\n' + \
                         canonical_headers + '\n' + signed_headers + '\n' + payload_hash
@@ -56,7 +56,7 @@ class AmazonMessage():
         signature = hmac.new(signing_key, (string_to_sign).encode('utf-8'), hashlib.sha256).hexdigest()
         authorization_header = algorithm + ' ' + 'Credential=' + self.__access_key + '/' + credential_scope + ', ' +  \
                            'SignedHeaders=' + signed_headers + ', ' + 'Signature=' + signature
-        headers = {'x-amz-date':amzdate, 'Authorization':authorization_header}
+        headers = {'x-sms-date':amzdate, 'Authorization':authorization_header}
         return headers
 
     def send_message(self, message, topicArn):

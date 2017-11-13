@@ -1,14 +1,35 @@
 /* #### Texture for white background #### */
 body {
-    background: #fff url(/static/theme/brandx/images/APPS-main-pattern-lighter.png);
+    background: #fff url(/static/theme/campusclaxon/images/APPS-main-pattern-lighter.png);
 }
+
+
 /* #### Header COLOR, BORDER COLOR, & GRADIENT TEXTURE #### */
 .navbar-inverse {
-    background: #050 url(/static/theme/brandx/images/APPS-header.png) 0 bottom repeat-x;
-    border-bottom: 5px solid #000;
+    background: purple url(/static/theme/campusclaxon/images/APPS-header.png) 0 bottom repeat-x;
+    border-bottom: 5px solid orange;
 }
-/* #### Optional transparent seal for inner panel body #### */
+
+
+/* #### Transparent seal & background-color for inner panel body #### */
 .blog-main .panel-body {
-    background: #fffbfb url(/static/theme/brandx/images/BrandX-seal-transparent2.png) center top no-repeat;
+    background: #fff9ff url(/static/theme/campusclaxon/images/BrandX-seal-transparent2.png) center top no-repeat;
+}
+.blog-sidebar > .panel-danger > .panel-heading {
+    color: #ff0600;
+    background-color: #f0def2;
+    border-color: #ebccd1;
+}
+.panel-success .panel-body {
+    background: #fdfffb url(/static/theme/campusclaxon/images/BrandX-seal-transparent2.png) center top no-repeat;
+}
+
+
+
+/* #### Color & background-color for inner panel title/heading #### */
+.panel-primary > .panel-heading {
+    color: #fff;
+    background: #9a0f9a;
+    border-bottom: 5px solid #E4E4E4;
 }
 

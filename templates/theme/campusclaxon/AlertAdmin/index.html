@@ -1,9 +1,9 @@
-{% extends "theme/brandx/base-admin.html" %}
+{% extends 'theme/'|add:theme|add:'/base-admin.html' %}
 {% block content %}
     <br/>
     <div class="container">
     <ol class="breadcrumb">
-        <li class="active">Home</li>
+        <li class="active">Admin Home</li>
     </ol>
 
     <div class="row" style="width: 40%; margin: -10px auto 10px;">
@@ -54,7 +54,8 @@
                     </div>
                 </div>
             </div>
-                    <p style="text-align: center; font-size: 12px; color:#777">Created and Developed by:<br />Western Okalhoma State College IT<br /><a href="https://www.wosc.edu">www.wosc.edu</a></p>
+
+        {%  include 'registration/version.html' %}
 
         </div>
 
@@ -62,7 +63,7 @@
             <div class="panel panel-danger">
                 <div class="panel-heading">
                     <h1 class="panel-title">
-                        {%  include 'theme/'|add:theme|add:'/BRANDING-name.html' %} Alert Help!
+                        {%  include 'theme/'|add:theme|add:'/BRANDING-name.html' %}  Help!
                     </h1>
                 </div>
                 <div class="panel-body">
@@ -90,7 +91,7 @@
                         <h4>
                             <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Manage Subscribers
                         </h4>
-                        <p>Add / Edit users within the {%  include "theme/brandx/BRANDING-name.html" %} Alert System.</p>
+                        <p>Add / Edit users within the {%  include 'theme/'|add:theme|add:'/BRANDING-name.html' %} System.</p>
                     </div><!--/sidebar-module-->
                     <div class="sidebar-module">
                         <h4>

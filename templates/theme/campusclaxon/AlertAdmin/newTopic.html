@@ -1,4 +1,4 @@
-{% extends "theme/brandx/base-admin.html" %}
+{% extends 'theme/'|add:theme|add:'/base-admin.html' %}
 {% block content %}
     <br/>
     <div class="container">
@@ -30,27 +30,29 @@
         </div>
 
         <div class="col-sm-3 2col-sm-offset-1 blog-sidebar">
-            {% include 'theme/brandx/AlertAdmin/helpText-Topic.html' %}
+            {% include 'theme/pioneeralert/AlertAdmin/helpText-Topic.html' %}
         </div><!--/blog-sidebar-->
     </div><!--/row-->
+</div>
 
+{#    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>#}
     <script>
-        $("label[for='id_topic_name']").attr("id", "id_topic_name");
-        $("label[for='id_topic_owner']").attr("id", "id_topic_owner");
-        $('#id_topic_name').text(function(index, text) {
+        $("label[for='id_topic_name']").attr("id", "id_topic_name_label");
+        $("label[for='id_topic_owner']").attr("id", "id_topic_owner_label");
+        $('#id_topic_name_label').text(function(index, text) {
           return text.replace("Topic", "Group");
         });
-        $('#id_topic_owner').text(function(index, text) {
+        $('#id_topic_owner_label').text(function(index, text) {
           return text.replace("Topic", "Group");
         });
 
-    $(document).ready(function () {
-        $("#id_topic_name").keyup(function () {
-            if ($(this).val().match(/[ ]/g, "") != null) {
-                $(this).val($(this).val().replace(/[ ]/g, "_"));
-            }
+        $('#id_topic_name').keyup(function() {
+          $(this).val($(this).val().replace(/ +?/g, '_'));
         });
-    });
+        $('#id_display_name').keyup(function() {
+          $(this).val($(this).val().replace(/ +?/g, ''));
+        });
+        $("select option[value='select']").attr("disabled", "True");
     </script>
 {% endblock %}
 

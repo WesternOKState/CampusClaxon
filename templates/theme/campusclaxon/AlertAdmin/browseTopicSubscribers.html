@@ -1,11 +1,11 @@
-{% extends "theme/brandx/base-admin.html" %}
+{% extends 'theme/'|add:theme|add:'/base-admin.html' %}
 {% block content %}
     <br/>
     <div class="container">
     <ol class="breadcrumb">
         <li><a href="{% url 'adminIndex' %}">Home</a></li>
         <li><a href="{% url 'manageTopics' %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Manage
-            Topics</a></li>
+            Groups</a></li>
         <li class="active"> Subscriber List for Group: <span class="glyphicon glyphicon-th"
                                                              aria-hidden="true"></span> {{ topic.name }}</li>
     </ol>
@@ -42,7 +42,7 @@
                         Cell
                     </th>
                     <th>
-                        Student ID
+                        Student ID¨
                     </th>
                     <th style="width:220px">
                         Edit User / Remove?

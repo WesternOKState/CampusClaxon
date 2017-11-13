@@ -1,18 +1,15 @@
 {% load staticfiles %}
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="title" content="Pioneer Alert System"/>
-    <title>Pioneer Alert System</title>
+    <meta name="title" content="{% include 'theme/'|add:theme|add:'/BRANDING-page-title.html' %}"/>
+    <title>{% include 'theme/'|add:theme|add:'/BRANDING-page-title.html' %}</title>
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="https://www.wosc.edu/img/APPS-seal-P.ico">
+    {% include 'theme/'|add:theme|add:'/BRANDING-favicon.html' %}
 
     {#    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>#}
     <script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
@@ -25,7 +22,7 @@
     <!-- Custom styles for this template -->
     <link href="{% static 'css/!TEMPLATE.css' %}" rel="stylesheet" type="text/css"/>
     <!-- Custom branding for this template -->
-    <link href="{% static 'theme/brandx/css/!BRANDING.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'theme/'|add:theme|add:'/css/!BRANDING.css' %}" rel="stylesheet" type="text/css"/>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -52,7 +49,7 @@
             {% endif %}
             {% endfor %}
             <a class="navbar-brand" href="{% url 'adminIndex' %}">
-                {% include "theme/brandx/BRANDING-logo-40x40.html" %} {% include "theme/brandx/BRANDING-name.html" %}
+                {% include 'theme/'|add:theme|add:'/BRANDING-logo-40x40.html' %} {% include 'theme/'|add:theme|add:'/BRANDING-name.html' %}
             </a>
         </div>
         {% for group in user.groups.all %}
@@ -78,10 +75,11 @@
                 </li>
                 <li class="dropdown">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                        Welcome {{ user.first_name|upper }}!
+                        MANAGE
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
+                        <p style="text-align:center">Welcome {{ user.first_name|upper }}!</p>
                         <li>
                             <a href="{% url 'alert' %}" class="list-group-item list-group-item-info2">
                                 <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> View Alert Logs
@@ -139,12 +137,12 @@
 <footer clas="blog-footer">
     <div class="inner">
         <p style="text-align:center; margin-bottom: 50px">
-            {% include "theme/brandx/BRANDING-logo-400x120.html" %}
+            {% include 'theme/'|add:theme|add:'/BRANDING-logo-400x120.html' %}
         </p>
 
         <h3>
             <span class="glyphicon glyphicon-cog" aria-hidden="true" style="color:red"></span>
-            {% include "theme/brandx/BRANDING-name.html" %} <span style="color:red">Alert</span> System Admin
+            {%  include 'theme/'|add:theme|add:'/BRANDING-name.html' %} <span style="color:red">Alert</span> System Admin
         </h3>
 
         <p style="text-align: center; font-size: 12px; color:#777; margin: 30px auto; padding:30px; width:40%; border:1px dotted #ddd"

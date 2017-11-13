@@ -1,7 +1,8 @@
 import hashlib
 from .settings import SECRET_KEY
 import AlertAdmin.models
-from CampusClaxon.AmazonMessage import AmazonMessage
+# from CampusClaxon.SMSManager import AmazonMessage
+from CampusClaxon.SMSManager import SMSManager
 from django.views.generic import TemplateView, FormView, ListView
 import re
 
@@ -12,7 +13,7 @@ def get_hash(sid):
 
 def get_topic_subscribers(topic_arn):
     mySettings = AlertAdmin.models.Setting.objects.get(pk=1)
-    amazon = AmazonMessage(mySettings.aws_security_key, mySettings.aws_secret_key)
+    amazon = AmazonMessage(mySettings.security_key, mySettings.secret_key)
     amz_subs = amazon.get_subscribers(topic_arn)
     lcl_subs = AlertAdmin.models.Subscriber.objects.all()
     # To attempt efficiency, we are going to try to create a dic from the user data, keyed on the phone number
@@ -59,12 +60,12 @@ def change_cell_number(hash, new_num):
     subscriber = AlertAdmin.models.Subscriber.objects.get(hash=hash)
     topic_subscriptions = AlertAdmin.models.TopicSubscription.objects.filter(subscriber=subscriber, status='active')
     mysettings = AlertAdmin.models.Setting.objects.all()[0]
-    amz = AmazonMessage(mysettings.aws_security_key, mysettings.aws_secret_key)
+    sms = SMSManager()
     for subscription in topic_subscriptions:
-        res = amz.unsubscribe(subscription.subscription_arn)
+        res = sms.unsubscribe(subscription.subscription_arn)
         if res != 0: return "Unable to unsubscribe from " + subscription.topic.topic_name
         topic = subscription.topic.topic_arn
-        res = amz.subscribe(new_num,topic)
+        res = sms.subscribe(new_num,topic)
         if res == 0: return "Unable to subscribe to " + topic.topic_name
         new_subscription = AlertAdmin.models.TopicSubscription()
         new_subscription.subscriber = subscriber
@@ -80,9 +81,7 @@ def change_cell_number(hash, new_num):
 
 
 def get_theme(template):
-    theme_name = 'theme/brandx/' + template
-    if AlertAdmin.models.Setting.objects.all().count() > 0:
-        theme_name = 'theme/' + AlertAdmin.models.Setting.objects.all()[0].theme_name + '/' + template
+    theme_name = 'base/' + template
     return theme_name
 
 class AlertTemplateView(TemplateView):
@@ -120,3 +119,55 @@ class AlertListView(ListView):
         return context
 
 
+def add_new_subscriber(first_name, last_name, student_id, school_email):
+    print("Adding Subscriber...")
+    mySubscriber = AlertAdmin.models.Subscriber()
+    mySubscriber.first_name = first_name
+    mySubscriber.last_name = last_name
+    mySubscriber.cell_phone = ""
+    mySubscriber.student_id = student_id
+    mySubscriber.personal_email = ""
+    mySubscriber.school_email = school_email
+    mySubscriber.save()
+    subscribe_to_public(mySubscriber)
+    subscribe_to_required(mySubscriber)
+    return mySubscriber
+
+def subscribe_to_public(subscriber):
+    print("Subscribing to public:")
+    topics = AlertAdmin.models.Topic.objects.filter(topic_type="public")
+    for topic in topics:
+        if not AlertAdmin.models.TopicSubscription.objects.filter(topic=topic, subscriber=subscriber).exists():
+            sms = SMSManager()
+            subscription_arn = sms.subscribe(subscriber.hash, topic.topic_arn)
+            subscription = AlertAdmin.models.TopicSubscription()
+            print(topic.topic_name)
+            subscription.subscriber = subscriber
+            subscription.topic = topic
+            subscription.status = 'disabled'
+            subscription.subscription_arn = subscription_arn
+            subscription.save()
+    return 0
+
+def subscribe_to_required(subscriber):
+    print("Subscribing to required:")
+    topics = AlertAdmin.models.Topic.objects.filter(topic_type="required")
+    for topic in topics:
+        if not AlertAdmin.models.TopicSubscription.objects.filter(topic=topic, subscriber=subscriber).exists():
+            sms = SMSManager()
+            subscription_arn = sms.subscribe(subscriber.hash, topic.topic_arn)
+            print(topic.topic_name)
+            mysettings = AlertAdmin.models.Setting.objects.get(pk=1)
+            sms = SMSManager()
+            res = sms.subscribe(subscriber.cell_phone, topic.topic_arn)
+            print("Required: " + res)
+            if res != 0:
+                subscription = AlertAdmin.models.TopicSubscription()
+                subscription.subscriber = subscriber
+                subscription.topic = topic
+                subscription.status = 'active'
+                subscription.subscription_arn = subscription_arn
+                subscription.save()
+                return res
+            else:
+                return 0

@@ -1,4 +1,4 @@
-{% extends "theme/brandx/base-admin.html" %}
+{% extends 'theme/'|add:theme|add:'/base-admin.html' %}
 {% block content %}
 <br />
 <div class="container">
@@ -17,6 +17,7 @@
               </div>
               <div class="panel-body">
                 <form action="." method="post">
+                    {{ errors }}
                     {%   csrf_token %}
                         <input type="hidden" name="topic_arn" id="id_topic_arn" value="{{ topic_arn }}">
                         {{ form.as_p }} <br />
@@ -30,23 +31,26 @@
         </div>
 
         <div class="col-sm-3 2col-sm-offset-1 blog-sidebar">
-            {% include 'theme/brandx/AlertAdmin/helpText-Topic.html' %}
+            {% include 'theme/pioneeralert/AlertAdmin/helpText-Topic.html' %}
         </div><!--/blog-sidebar-->
     </div><!--/row-->
+</div>
 
     <script>
-        $("label[for='id_topic_name']").attr("id", "id_topic_name");
-        $('#id_topic_name').text(function(index, text) {
+        $("label[for='id_topic_name']").attr("id", "id_topic_name_label");
+        $('#id_topic_name_label').text(function(index, text) {
           return text.replace("Topic", "Group");
         });
-        $("label[for='id_topic_owner']").attr("id", "id_topic_owner");
-        $('#id_topic_owner').text(function(index, text) {
+        $("#id_topic_name").attr("readonly", "True");
+        $("label[for='id_topic_owner']").attr("id", "id_topic_owner_label");
+        $('#id_topic_owner_label').text(function(index, text) {
           return text.replace("Topic", "Group");
         });
-        $("label[for='id_topic_arn']").attr("id", "id_topic_arn");
-        $('#id_topic_arn').text(function(index, text) {
+        $("label[for='id_topic_arn']").attr("id", "id_topic_arn_label");
+        $('#id_topic_arn_label').text(function(index, text) {
           return text.replace("Topic", "Group");
         });
+        $("select option[value='select']").attr("disabled", "True");
     </script>
 
 {% endblock %}

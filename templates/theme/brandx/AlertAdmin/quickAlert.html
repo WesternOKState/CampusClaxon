@@ -1,4 +1,4 @@
-{% extends "theme/brandx/base-admin.html" %}
+{% extends 'theme/'|add:theme|add:'/base-admin.html' %}
 {% block content %}
     <br/>
     <div class="container">
@@ -183,9 +183,6 @@
         .helpico:hover {
             color:red
         }
-        .blog-main .panel-body {
-            background-color: #fff8f8
-        }
         .input-separator {
             margin: 28px 8px
         }
@@ -266,13 +263,18 @@
                 font-size:4vw
             }
         }
-        @media (max-width: 402px){
+        @media (max-width: 480px){
             #submitbtn {
                 width: 100%;
                 margin-right: 0;
+                border-radius: 0 0 8px 8px;
+                padding: 14px 0;
+                font-size: 18px;
             }
             #id_auth_code {
                 width: 100%;
+                border-radius: 8px 8px 0 0;
+                padding: 22px 0;
             }
         }
     </style>

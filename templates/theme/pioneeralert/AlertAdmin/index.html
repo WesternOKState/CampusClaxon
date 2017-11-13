@@ -1,4 +1,4 @@
-{% extends "theme/pioneeralert/base-admin.html" %}
+{% extends 'theme/'|add:theme|add:'/base-admin.html' %}
 {% block content %}
     <br/>
     <div class="container">
@@ -91,7 +91,7 @@
                         <h4>
                             <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Manage Subscribers
                         </h4>
-                        <p>Add / Edit users within the {%  include "theme/pioneeralert/BRANDING-name.html" %} System.</p>
+                        <p>Add / Edit users within the {%  include 'theme/'|add:theme|add:'/BRANDING-name.html' %} System.</p>
                     </div><!--/sidebar-module-->
                     <div class="sidebar-module">
                         <h4>

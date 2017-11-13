@@ -1,4 +1,4 @@
-{% extends "theme/brandx/base-admin.html" %}
+{% extends 'theme/'|add:theme|add:'/base-admin.html' %}
 {% block content %}
     <br/>
     <div class="container">
@@ -63,7 +63,7 @@
             <div class="panel panel-danger">
                 <div class="panel-heading">
                     <h1 class="panel-title">
-                        {%  include 'theme/'|add:theme|add:'/BRANDING-name.html' %} Alert Help!
+                        {%  include 'theme/'|add:theme|add:'/BRANDING-name.html' %}  Help!
                     </h1>
                 </div>
                 <div class="panel-body">
@@ -91,7 +91,7 @@
                         <h4>
                             <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Manage Subscribers
                         </h4>
-                        <p>Add / Edit users within the {%  include "theme/brandx/BRANDING-name.html" %} Alert System.</p>
+                        <p>Add / Edit users within the {%  include 'theme/'|add:theme|add:'/BRANDING-name.html' %} System.</p>
                     </div><!--/sidebar-module-->
                     <div class="sidebar-module">
                         <h4>

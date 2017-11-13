@@ -24,13 +24,18 @@ AUTH_CHOICES = (
 )
 
 
+SMS_PROVIDER_CHOICES = (
+    ('amazon', 'Amazon'),
+    ('nexmo', "Nexmo"),
+)
+
 class Subscriber(models.Model):
     last_name = models.CharField(max_length=30)
     first_name = models.CharField(max_length=30)
     cell_phone = models.CharField(max_length=30, null=True, blank=True)
     student_id = models.CharField(max_length=30)
     school_email = models.CharField(max_length=50, null=True, blank=True)
-    personal_email = models.CharField(max_length=50)
+    personal_email = models.CharField(max_length=50, null=True, blank=True)
     hash = models.CharField(max_length=56, default='', null=True, blank=True)
     opt_out = models.NullBooleanField(null=True, blank=True)
 
@@ -42,6 +47,23 @@ class Subscriber(models.Model):
         return self.last_name + " " + self.first_name
 
 
+class ResultsLog(models.Model):
+    message_count = models.IntegerField()
+    messages = models.CharField(max_length=2048)
+    status = models.CharField(max_length=128)
+    message_id = models.CharField(max_length=16)
+    to = models.CharField(max_length=16)
+    client_ref = models.CharField(max_length=40)
+    remaining_balance = models.CharField(max_length=16)
+    message_price = models.CharField(max_length=16)
+    network = models.CharField(max_length=40)
+    error_text = models.CharField(max_length=1024)
+    time_Stamp = models.DateTimeField()
+
+    def __str__(self):
+        return str(self.to)
+
+
 class MessageLog(models.Model):
     initiator = models.ForeignKey(User)
     timestamp = models.DateTimeField(auto_now=True)
@@ -50,9 +72,6 @@ class MessageLog(models.Model):
 
     def __str__(self):
         return self.message
-
-
-
 
 
 class Topic(models.Model):
@@ -67,16 +86,18 @@ class Topic(models.Model):
     def __str__(self):
         return self.topic_name
 
+
 class Setting(models.Model):
-    aws_security_key = models.CharField(max_length=50)
-    aws_secret_key = models.CharField(max_length=150)
+    security_key = models.CharField(max_length=50)
+    secret_key = models.CharField(max_length=150)
     theme_name = models.CharField(max_length=50)
     authentication_type = models.CharField(max_length=100, choices=AUTH_CHOICES, default="internal")
     quick_alert_auth_code= models.CharField(max_length=100)
     global_topic = models.ForeignKey(Topic)
+    sms_provider = models.CharField(max_length=100, choices=SMS_PROVIDER_CHOICES)
 
     def __str__(self):
-        return str(self.aws_security_key)
+        return str(self.theme_name + " " + self.sms_provider)
 
 class TopicSubscription(models.Model):
     subscriber = models.ForeignKey("Subscriber")

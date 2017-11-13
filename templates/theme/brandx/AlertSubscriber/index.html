@@ -1,4 +1,4 @@
-{% extends "theme/brandx/base-subscriber.html" %}
+{% extends 'theme/'|add:theme|add:'/base-subscriber.html' %}
 {% block content %}
     <br/>
     <div class="container">
@@ -43,7 +43,7 @@
                     </div>
                 </div>
             </div>
-            {%  include 'theme/version.html' %}
+            {%  include 'theme/../../../registration/version.html' %}
         </div>
 
         <div class="col-sm-3 2col-sm-offset-1 blog-sidebar">
