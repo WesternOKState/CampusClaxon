@@ -15,7 +15,8 @@ from django.views.generic import View
 from CampusClaxon import settings
 from LTI.lti import LtiLaunch
 from CampusClaxon.SMSManager import SMSManager
-from CampusClaxon.lib import get_hash, processFile, change_cell_number, AlertTemplateView, AlertFormView, AlertListView, add_new_subscriber
+from CampusClaxon.lib import get_hash, processFile, change_cell_number, AlertTemplateView, AlertFormView, AlertListView, \
+    add_new_subscriber, subscribe_to_public, subscribe_to_required
 from .forms import MyMessageForm, SettingsForm, TemplateForm, SubscriberForm, FileUploadForm, \
     AddSubscriberForm, NewTopicForm, QuickAlertForm, QuickSevereWeatherForm, QuickSchoolClosingForm, \
     QuickOutageForm, QuickOnlineDowntimeForm
