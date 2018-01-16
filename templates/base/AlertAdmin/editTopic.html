@@ -1,0 +1,57 @@
+{% extends 'base/base-admin.html' %}
+{% block content %}
+<br />
+<div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'adminIndex' %}">Home</a></li>
+        <li><a href="{%  url 'manageTopics' %}"><span class="glyphicon glyphicon-th" aria-hidden="true"></span> Manage Groups</a></li>
+        <li class="active">Edit Group</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h1 class="panel-title"><strong><span class="glyphicon glyphicon-th" aria-hidden="true"></span> Group Settings</strong></h1>
+              </div>
+              <div class="panel-body">
+                <form action="." method="post">
+                    {{ errors }}
+                    {%   csrf_token %}
+                        <input type="hidden" name="topic_arn" id="id_topic_arn" value="{{ topic_arn }}">
+                        {{ form.as_p }} <br />
+                        <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save Group Settings
+                        </button>
+                </form>
+              </div>
+            </div>
+
+        </div>
+
+        <div class="col-sm-3 2col-sm-offset-1 blog-sidebar">
+            {% include 'theme/brandx/AlertAdmin/helpText-Topic.html' %}
+        </div><!--/blog-sidebar-->
+    </div><!--/row-->
+</div>
+
+    <script>
+        $("label[for='id_topic_name']").attr("id", "id_topic_name_label");
+        $('#id_topic_name_label').text(function(index, text) {
+          return text.replace("Topic", "Group");
+        });
+        $("#id_topic_name").attr("readonly", "True");
+        $("label[for='id_topic_owner']").attr("id", "id_topic_owner_label");
+        $('#id_topic_owner_label').text(function(index, text) {
+          return text.replace("Topic", "Group");
+        });
+        $("label[for='id_topic_arn']").attr("id", "id_topic_arn_label");
+        $('#id_topic_arn_label').text(function(index, text) {
+          return text.replace("Topic", "Group");
+        });
+        $("select option[value='select']").attr("disabled", "True");
+    </script>
+
+{% endblock %}
+

@@ -1,0 +1,233 @@
+{% extends 'base/base-admin.html' %}
+{% block content %}
+    <br/>
+    <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'adminIndex' %}">Home</a></li>
+        <li><a href="
+                {% if topic %}{% url 'browseSubscribers' topic %}{% else %}{% url 'manageSubscribers' %}{% endif %}"><span
+                class="glyphicon glyphicon-user" aria-hidden="true"></span> Manage Subscribers</a></li>
+        <li class="active">New Subscriber</li>
+    </ol>
+
+    {% if topic %}
+    <div class="panel panel-primary blog-main">
+        <div class="panel-heading">
+            <h1 class="panel-title">
+                <span class="glyphicon glyphicon-user" aria-hidden="true"></span> User
+            </h1>
+        </div>
+        <div class="panel-body">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Add Existing to Group
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                    <span class="col-lg-4" style="display:none;"><strong>Phone Number: </strong><br/><select
+                            name="search_phone" id="id_search_phone" class="search_phone form-control">
+                        <option value="" selected>Phone Number</option>
+                    </select></span>
+                        <span class="col-lg-5"><strong>Last Name, First Name:</strong><br/></strong><select
+                                name="search_name" id="id_search_name" class="search_name form-control">
+                        <option value="" selected>Last name, First name</option>
+                    </select>
+                    </span>
+                    </div>
+                </div>
+            </div>
+    {% endif %}
+            <div class="panel panel-primary blog-main">
+                <div class="panel-heading">
+                    <h1 class="panel-title">
+                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add New
+                    </h1>
+                </div>
+                <div class="panel-body">
+                    <form action="." method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="topic" id="id_topic" value="{{ topic }}">
+                        <p>
+                            {{ form.last_name.label }}:
+                            {{ form.last_name }}
+                        </p>
+                        <p>
+                            {{ form.first_name.label }}:
+                            {{ form.first_name }}
+                        </p>
+                        {% if authentication_type == "internal" %}
+                            <p>
+                                {{ form.password.label }}:
+                                {{ form.password }}
+                            </p>
+                        {% endif %}
+                        <p>
+                            {{ form.cell_phone.label }}:
+                            {{ form.cell_phone }}
+                        </p>
+                        <p>
+                            {{ form.student_id.label }}:
+                            {{ form.student_id }}
+                        </p>
+                        <p>
+                            {{ form.personal_email.label }}:
+                            {{ form.personal_email }}
+                        </p>
+                        <p>
+                            {{ form.school_email.label }}:
+                            {{ form.school_email }}
+                        </p>
+                        <p>
+                            <label for="id_opt_out">
+                                Stop receiving text messages to my cell phone:
+                            </label>
+                                {{ form.opt_out }}
+                            <div class="warning-text"></div>
+                        </p>
+                        <button type="submit" class="btn btn-success" id="submitbtn" style="float:right" title="{{ topic }}">
+                            <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save User {% if topic %} to this group{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .warning-text:after {
+            content: "By checking this checkbox, you will not receive any text notifications such as; weather updates, school closings, or even shooter on campus notifications.  \00000A  You will still be enrolled with email notifications.";
+            color:red;
+            font-size:12px;
+        }
+    </style>
+
+    <script type="text/javascript ">
+
+        $('#id_cell_phone').mask("9(999)999-9999", {placeholder: "1(580)555-1212"});
+        $('.search_phone').on("select2:select", function (e) {
+            displaySubscriber(e);
+        });
+        $('.search_name').on("select2:select", function (e) {
+            displaySubscriber(e);
+        });
+
+        function displaySubscriber(evt) {
+            var sub = evt.params.data;
+            $('#id_last_name').val(sub.last_name);
+            $('#id_first_name').val(sub.first_name);
+            $('#id_cell_phone').val(sub.cell_phone);
+            $('#id_student_id').val(sub.student_id);
+            $('#id_personal_email').val(sub.personal_email);
+            $('#id_school_email').val(sub.school_email);
+            {#    $('#id_cell_phone').attr('disabled','True');#}
+        }
+
+
+        // This section for Phone Search
+
+        function formatRepoSelection(repo) {
+            return repo.cell_phone;
+        }
+
+        $(".search_phone").select2({
+            ajax: {
+                url: "{% url 'find_user' %}",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term,
+                        page: params.page
+                    };
+                },
+
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    return {
+                        results: data,
+                        pagination: {
+                            more: (params.page * 30) < data.total_count
+                        }
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            },
+            minimumInputLength: 1,
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+
+
+        function formatRepo(repo) {
+            var term = $('.select2-search__field').val();
+            var cell_phone = '';
+            if (repo.loading) return repo.text;
+            if (repo.cell_phone.startsWith(term)) {
+                cell_phone = "<strong>" + repo.cell_phone.substring(0, term.length) + "</strong>" + repo.cell_phone.substring(term.length, repo.cell_phone.length);
+            }
+            var markup = '<div>' + cell_phone + '</div>';
+            return markup;
+        }
+
+        // This section for name search
+
+        function formatNameSearchSelection(repo) {
+            return repo.last_name || repo.first_name;
+        }
+
+        $(".search_name").select2({
+            ajax: {
+                url: "{% url 'find_user_by_name' %}",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term,
+                        page: params.page
+                    };
+                },
+
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    return {
+                        results: data,
+                        pagination: {
+                            more: (params.page * 30) < data.total_count
+                        }
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            },
+            minimumInputLength: 1,
+            templateResult: formatNameSearch,
+            templateSelection: formatNameSearchSelection
+        });
+
+        function formatNameSearch(repo) {
+            var term = $('.select2-search__field').val();
+            if (repo.loading) return repo.text;
+            if (repo.last_name.toLowerCase().startsWith(term.toLowerCase())) {
+                last_name = "<strong>" + repo.last_name.substring(0, term.length) + "</strong>" + repo.last_name.substring(term.length, repo.last_name.length);
+            }
+            else last_name = repo.last_name;
+            if (repo.first_name.toLowerCase().startsWith(term.toLowerCase())) {
+                first_name = "<strong>" + repo.first_name.substring(0, term.length) + "</strong>" + repo.first_name.substring(term.length, repo.first_name.length);
+            }
+            else first_name = repo.first_name;
+
+            var markup = '<div>' + last_name + ' - ' + first_name + '</div>';
+            return markup;
+        }
+
+    </script>
+
+{% endblock %}
+

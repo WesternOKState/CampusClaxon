@@ -1,0 +1,29 @@
+{% extends 'base/base-admin.html' %}
+{% block content %}
+<br />
+<div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'adminIndex' %}">Home</a></li>
+        <li><a href="{% url 'manageTopicSubscribers' topic.arn %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Manage Subscribers</a></li>
+        <li class="active">Bulk Upload</li>
+    </ol>
+
+<div class="panel panel-primary blog-main" >
+  <div class="panel-heading">
+    <h1 class="panel-title"><strong><span class="glyphicon glyphicon-import" aria-hidden="true"></span> Select a file to upload.</strong></h1>
+  </div>
+  <div class="panel-body">
+      <p>File should be comma-seperated in the following format:</br>
+<pre>StudentID,Cellphone,PersonalEmail,SchoolEmail,Lastname,Firstname
+000000000,5805551212,john.doe@gmail.com,john.doe@email.wosc.edu,Doe,John</pre>
+
+    <form action="../" enctype="multipart/form-data" method="post">
+        {%   csrf_token %}
+            {{ form.as_p }} <br />
+            <input class="btn btn-success" type="submit" value="Save">
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+

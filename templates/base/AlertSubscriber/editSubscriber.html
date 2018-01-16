@@ -1,0 +1,276 @@
+{% extends 'base/base-subscriber.html' %}
+{% block content %}
+    <br/>
+    <div class="container">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'index' %}">Home</a></li>
+            {#        <li><a href="{% url 'manageSubscribers' topic %}">Manage Subscribers</a></li>#}
+            <li class="active">Manage Subscriber Account</li>
+        </ol>
+
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h1 class="panel-title"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <strong>Edit
+                    Subscriber (User)</strong></h1>
+            </div>
+            <div class="panel-body">
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <input type="hidden" name="topic" id="id_topic" value="{{ topic }}">
+                            <input type="hidden" name="cell_phone" id="id_cell_phone" value="{{ cell_phone }}">
+                            <div class="input-row">
+                                <label for="id_first_name">
+                                    First Name:
+                                </label>
+                                <input class="form-control" id="id_first_name" maxlength="30" name="first_name"
+                                       value="{{ first_name }}" type="text" disabled>
+                            </div>
+                            <div class="input-row">
+                                <label for="id_last_name">
+                                    Last Name:
+                                </label>
+                                <input class="form-control" id="id_last_name" maxlength="30" name="last_name"
+                                       value="{{ last_name }}" type="text" disabled>                            </div>
+                            {#                    <p><span  id="cell_phone">{{ cell_phone }} &nbsp; <a href="{% url 'edit_cell_phone' cell_phone %}"><i class="glyphicon glyphicon-edit">[edit]</i></a></span></p>#}
+                            <div class="input-row">
+                                <div for="id_student_id" class="labeled">
+                                    Student ID:
+                                </div>
+                                <div class="fake-input" title="Cannot change your Student ID number.">{{ student_id }}</div>
+                                {#                        <input class="form-control" id="id_student_id" maxlength="30" name="student_id" value="{{ student_id }}" type="text" disabled>#}
+                            </div>
+                            {% if authentication_type == "internal" %}
+                                <div class="input-row">
+                                    <label for="id_password" class="labeled">
+                                        Password:
+                                    </label>
+                                    {{ form.password }}
+                                    <div style="color:#5800ff; font-size:11px; font-style: italic; padding:2px 0">
+                                        For no password changes, leave this field blank.
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div><!--/col-->
+                        <div class="col-sm-6">
+                            <div class="input-row">
+                                <label for="id_personal_email">
+                                    Personal Email:
+                                </label>
+                                {{ form.personal_email }}
+                            </div>
+                            <div class="input-row">
+                                <label for="id_school_email">
+                                    School Email:
+                                </label>
+                                <input class="form-control" id="id_school_email" maxlength="30" name="school_email" type="text"
+                                       value="{{ school_email }}" disabled>
+                            </div>
+                            <div class="input-row">
+                                <div for="id_student_cell" style="display:block" class="labeled">
+                                    Cell Phone:
+                                </div>
+                                <div class="fake-input cell cellblur" title="Please use the Edit Cell Phone link to the right">
+                                    {{ cell_phone }}
+                                </div>
+                            {#                        <input class="form-control" id="id_student_cell" maxlength="30" name="student_cell" value="{{ cell_phone }}" type="text"  style="display:inline-block" disabled hidden> &nbsp;#}
+                                <a href="#" data-toggle="modal" data-target="#myModal" class="btn btn-warning cell" style="margin-bottom: 0">
+                                    <span class="glyphicon glyphicon-edit"></span> Edit Cell Phone
+                                </a>
+                            </div>
+                            <div class="input-row">
+                                <label for="id_optout">
+                                    Stop receiving text messages to my cell phone:
+                                </label>
+                                    {{ form.opt_out }}
+                                <div class="warning-text"></div>
+                            </div>
+{#                            <a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseExample"#}
+{#                               aria-expanded="false" aria-controls="collapseExample" style="float:left; margin:0">#}
+{#                              Alternate Phone Number?#}
+{#                            </a>#}
+{#                                <div class="collapse" id="collapseExample" style="">#}
+{#                                  <div class="well">#}
+{#                                    <label for="id_alt_phone">#}
+{#                                        Alternate Phone Number:#}
+{#                                    </label>#}
+{#                                    <input class="form-control" id="id_school_email" maxlength="30" name="alt_phone" type="text"#}
+{#                                           value="{{ alt_phone }}" >#}
+{#                                  </div><!--/well-->#}
+{#                                </div><!--/collapse-->#}
+                        </div><!--/col-->
+                    </div><!--/row-->
+                    <button type="submit" class="btn btn-success" id="submitbtn" style="#float:right">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save Subscriber
+                    </button>
+                    <p>&nbsp;</p>
+                </form>
+            </div>
+            <div class=".col-xs-6 .col-sm-3"></div>
+        </div>
+    </div>
+
+
+    <style>
+        .form-control {
+            width: 100%;
+            max-width: 400px;
+            font-family: Arial, sans-serif;
+        }
+
+        .labeled {
+            display: block;
+            max-width: 100%;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .fake-input {
+            display: inline-block;
+            width: 100%;
+            max-width: 400px;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            font-family: Arial, sans-serif;
+            color: #555;
+            cursor: not-allowed;
+            background-color: #eee;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        }
+
+        .warning-text:after {
+            content: "By checking this checkbox, you will not receive any text notifications such as; weather updates, school closings, or other emergency campus notifications.  \00000A  You will still be enrolled with email notifications.";
+            color:red;
+            font-size:12px;
+        }
+
+        .modal .warning-text:after {
+            font-size:20px;
+            text-align: justify;
+        }
+
+        .cell {
+            width: 100%;
+            max-width: 197px;
+        }
+
+        div.row:first-of-type {
+            width: inherit !important;
+        }
+
+        .input-row {
+            padding: 8px 0;
+        }
+
+        @media (min-width: 768px) and (max-width: 1149px) {
+            .cell {
+                width: 49%;
+                max-width: inherit;
+            }
+        }
+
+        @media (max-width: 479px){
+            .cell {
+                width: 49%;
+                max-width: inherit;
+            }
+        }
+
+        @media (max-width: 393px){
+            .cell {
+                width: 100%;
+                max-width: inherit;
+            }
+        }
+    </style>
+
+
+
+    <div class="modal fade" id="myModal" aria-hidden="true" style="display: none; ">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h1 class="panel-title"><strong>Edit Cell Phone</strong></h1>
+                        </div>
+                        <div class="panel-body">
+                            <form action="{% url 'edit_subscriber_cell_phone' %}" method="post">
+                                {% csrf_token %}
+                                {#                                {{ form.as_p }} <br/>#}
+                                <br/>
+                                <label for="id_new_number">New Number:</label>
+                                <input class="form-control" type="text" name="new_number" id="id_new_number"
+                                       autofocus=""/>
+                                <input type="hidden" name="old_number" value="{{ cell_phone }}" id="id_old_number"/>
+                                <br/>
+                                <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
+                                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save Cell
+                                </button>
+                            </form>
+                        </div><!-- /.panel-body -->
+                    </div><!-- /.panel -->
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div class="modal fade" id="myModalwarning" aria-hidden="true" style="display: none; ">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h1 class="modal-title">Opt-out Warning</h1>
+                </div>
+                        <div class="panel-body" style="padding:30px 12px;">
+
+                            <div class="warning-text"></div>
+                            <h2 style="padding-top:20px; text-align:center">Are you sure you want to opt-out?</h2>
+
+                        </div><!-- /.panel-body -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" id="cancel" data-dismiss="modal" style="margin-bottom:0">Cancel</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" style="margin-bottom:0">Opt-out</button>
+                    </div><!-- /.panel-footer -->
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+
+
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="/static/js/jquery.maskedinput.min.js"></script>
+    <script src="/static/js/select2.full.min.js"></script>
+    <script type="text/javascript">
+
+        $('#id_new_number').mask("9(999)999-9999", {placeholder: "{{ cell_phone }}"});
+
+        $('#cancel').click(function () {
+            $('#id_opt_out').removeAttr('checked');
+        });
+
+        $('#id_opt_out').change(function() {
+            if ($(this).is(':checked')) {
+               $('#myModalwarning').modal('show');
+            };
+          });
+
+        $('#id_student_id').addClass('blurry-text');
+        $('.fake-input').addClass('blurry-text');
+
+    </script>
+
+{% endblock %}
+

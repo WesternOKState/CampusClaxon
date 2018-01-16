@@ -1,0 +1,33 @@
+{% extends 'base/base-admin.html' %}
+{% block content %}
+    <br/>
+    <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'adminIndex' %}">Home</a></li>
+        <li><a href="{% url 'manageTopics' %}">Manage Topics</a></li>
+        <li class="active">Manage Subscribers: {{ topic.name }}</li>
+    </ol>
+
+    <div class="panel panel-primary blog-main">
+        <div class="panel-heading">
+            <h1 class="panel-title"><strong><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Manage
+                Subscribers for {{ topic.name }}</strong></h1>
+        </div>
+        <div class="panel-body">
+            <div class="list-group">
+                <a href="{% url 'browseSubscribers' topic.arn %}" class="list-group-item">
+                    <span class="glyphicon glyphicon-book" aria-hidden="true"></span> Browse Subscribers
+                </a>
+                <a href="{% url 'uploadSubscribers' topic.arn %}" class="list-group-item">
+                    <span class="glyphicon glyphicon-import" aria-hidden="true"></span> Bulk Upload Subscribers
+                </a>
+                <a href="{% url 'addSubscribers' topic.arn %}" class="list-group-item">
+                    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Subscribers
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+

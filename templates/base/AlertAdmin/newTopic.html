@@ -1,0 +1,98 @@
+{% extends 'base/base-admin.html' %}
+{% block content %}
+    <br/>
+    <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'adminIndex' %}">Home</a></li>
+        <li><a href="{% url 'manageTopics' %}">Manage Groups</a></li>
+        <li class="active">New Group</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+            <div class="panel panel-primary blog-main">
+                <div class="panel-heading">
+                    <h1 class="panel-title">
+                        <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
+                        Group Settings
+                    </h1>
+                </div>
+                <div class="panel-body">
+                    <form action="." method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-success" id="submitbtn" style="float:right">
+                            <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save Group
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3 2col-sm-offset-1 blog-sidebar">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h1 class="panel-title">
+                        Admin Help!
+                    </h1>
+                </div>
+                <div class="panel-body">
+
+                    <div class="sidebar-module">
+                        <h2>
+                            Group Name
+                        </h2>
+                        <p>Full name of this group with no spaces.</p>
+                    </div><!--/sidebar-module-->
+                    <div class="sidebar-module">
+                        <h2>
+                            Group Display Name
+                        </h2>
+                        <p>This is the pre-fix to each message sent.  Make this as short as possible.</p>
+                    </div><!--/sidebar-module-->
+                    <div class="sidebar-module">
+                        <h2>
+                            Group Owner
+                        </h2>
+                        <p>Who will own this group?  Messages will be from this user.</p>
+                    </div><!--/sidebar-module-->
+                    <div class="sidebar-module">
+                        <h2>
+                            Group Type
+                        </h2>
+                        <p>PUBLIC: Anyone can subscribe.<br />PRIVATE: Only admin can subscribe users.<br />REQUIRED: All users are subscribed.</p>
+                    </div><!--/sidebar-module-->
+                    <div class="sidebar-module">
+                        <h2>
+                            Group Description
+                        </h2>
+                        <p>Add a description of what the group will be for.</p>
+                    </div><!--/sidebar-module-->
+
+                </div><!--/panel-body-->
+            </div><!--/panel-->
+        </div><!--/blog-sidebar-->
+    </div><!--/row-->
+</div>
+
+{#    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>#}
+    <script>
+        $("label[for='id_topic_name']").attr("id", "id_topic_name_label");
+        $("label[for='id_topic_owner']").attr("id", "id_topic_owner_label");
+        $('#id_topic_name_label').text(function(index, text) {
+          return text.replace("Topic", "Group");
+        });
+        $('#id_topic_owner_label').text(function(index, text) {
+          return text.replace("Topic", "Group");
+        });
+
+        $('#id_topic_name').keyup(function() {
+          $(this).val($(this).val().replace(/ +?/g, '_'));
+        });
+        $('#id_display_name').keyup(function() {
+          $(this).val($(this).val().replace(/ +?/g, ''));
+        });
+        $("select option[value='select']").attr("disabled", "True");
+    </script>
+{% endblock %}
+
