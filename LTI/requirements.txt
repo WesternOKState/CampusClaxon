@@ -3,7 +3,7 @@ Django==1.11.23
 lti==0.8.4
 lxml==3.6.4
 oauthlib==2.0.0
-pip==8.1.2
+pip==19.2
 requests==2.20.0
 requests-oauthlib==0.6.2
 setuptools==17.0
