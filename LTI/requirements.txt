@@ -1,7 +1,7 @@
 oauth2
 Django==1.11.23
 lti==0.8.4
-lxml==3.6.4
+lxml==4.9.1
 oauthlib==2.0.0
 pip==8.1.2
 requests==2.20.0
